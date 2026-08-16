@@ -187,7 +187,7 @@ svg.mini{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;s
 </head>
 <body>
 
-<div id="lock" class="phone">
+<div id="lock" class="phone" style="display:none">
   <p class="lock-mark">Europe<br>2026</p>
   <p class="lock-sub">Locked. Everything here is encrypted until you type the passphrase.</p>
   <div class="lock-form">
@@ -543,7 +543,395 @@ let tt;
 function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),1400)}
 
 try{if(localStorage.getItem("eu26.light")==="1")document.body.classList.add("light")}catch{}
-boot();
+start({
+  "meta": {
+    "title": "Europe 2026",
+    "travelers": [
+      "Adam",
+      "Erin"
+    ],
+    "start": "2026-09-02",
+    "end": "2026-09-22",
+    "home": {
+      "city": "Los Angeles",
+      "country": "United States",
+      "flag": "us",
+      "pop": "#4A6CF7",
+      "code": "LAX"
+    }
+  },
+  "places": [
+    {
+      "city": "In the air",
+      "code": "FRA",
+      "start": "2026-09-02",
+      "end": "2026-09-03",
+      "transit": true
+    },
+    {
+      "city": "Mallorca",
+      "code": "PMI",
+      "start": "2026-09-03",
+      "end": "2026-09-09"
+    },
+    {
+      "city": "Berlin",
+      "code": "BER",
+      "start": "2026-09-09",
+      "end": "2026-09-15"
+    },
+    {
+      "city": "Stockholm",
+      "code": "ARN",
+      "start": "2026-09-15",
+      "end": "2026-09-19"
+    },
+    {
+      "city": "Dublin",
+      "code": "DUB",
+      "start": "2026-09-19",
+      "end": "2026-09-22"
+    }
+  ],
+  "route": [
+    "LAX",
+    "PMI",
+    "BER",
+    "ARN",
+    "DUB",
+    "LAX"
+  ],
+  "flights": [
+    {
+      "date": "2026-09-02",
+      "from": {
+        "code": "LAX",
+        "city": "Los Angeles",
+        "time": "15:05"
+      },
+      "to": {
+        "code": "PMI",
+        "city": "Palma de Mallorca",
+        "time": "15:20",
+        "arrivesNextDay": true
+      },
+      "airline": "Lufthansa",
+      "number": "LH 457 · LH 1158",
+      "duration": "15h 15m",
+      "stop": "1 stop in Frankfurt (FRA)",
+      "cabin": "Economy Comfort",
+      "codes": [
+        {
+          "label": "Airline ref",
+          "value": "AUXTLY",
+          "primary": true
+        },
+        {
+          "label": "Agency ref",
+          "value": "HKVTTT"
+        },
+        {
+          "label": "Chase trip",
+          "value": "1021099395"
+        }
+      ],
+      "notes": [
+        "Chase Travel: 1-866-331-0773"
+      ]
+    },
+    {
+      "date": "2026-09-09",
+      "from": {
+        "code": "PMI",
+        "city": "Palma de Mallorca",
+        "time": "13:00"
+      },
+      "to": {
+        "code": "BER",
+        "city": "Berlin Brandenburg",
+        "time": "15:45"
+      },
+      "airline": "Ryanair",
+      "number": "FR 111",
+      "duration": "2h 45m",
+      "codes": [
+        {
+          "label": "Reservation",
+          "value": "DYLZQB",
+          "primary": true
+        }
+      ],
+      "notes": []
+    },
+    {
+      "date": "2026-09-15",
+      "from": {
+        "code": "BER",
+        "city": "Berlin Brandenburg",
+        "time": "12:15",
+        "terminal": "Terminal 1"
+      },
+      "to": {
+        "code": "ARN",
+        "city": "Stockholm Arlanda",
+        "time": "13:50",
+        "terminal": "Terminal 5"
+      },
+      "airline": "Norwegian",
+      "number": "D8 4506",
+      "duration": "1h 35m",
+      "cabin": "Flex",
+      "seats": [
+        {
+          "who": "Adam",
+          "seat": "01D"
+        },
+        {
+          "who": "Erin",
+          "seat": "01E"
+        }
+      ],
+      "codes": [
+        {
+          "label": "Booking ref",
+          "value": "ZJ22F4",
+          "primary": true
+        },
+        {
+          "label": "Ticket · Adam",
+          "value": "328 2407522456"
+        },
+        {
+          "label": "Ticket · Erin",
+          "value": "328 2407522455"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "date": "2026-09-19",
+      "from": {
+        "code": "ARN",
+        "city": "Stockholm Arlanda",
+        "time": "17:30",
+        "terminal": "Terminal 5"
+      },
+      "to": {
+        "code": "DUB",
+        "city": "Dublin",
+        "time": "19:15"
+      },
+      "airline": "SAS",
+      "number": "SK 535",
+      "duration": "2h 45m",
+      "operatedBy": "Operated by SAS Connect",
+      "codes": [
+        {
+          "label": "Booking ref",
+          "value": "ZJJTVO",
+          "primary": true
+        },
+        {
+          "label": "Ticket · Adam",
+          "value": "117 2550089745"
+        },
+        {
+          "label": "Ticket · Erin",
+          "value": "117 2550089744"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "date": "2026-09-22",
+      "from": {
+        "code": "DUB",
+        "city": "Dublin",
+        "time": "15:25"
+      },
+      "to": {
+        "code": "LAX",
+        "city": "Los Angeles",
+        "time": "18:25"
+      },
+      "airline": "Aer Lingus",
+      "number": "EI 69",
+      "duration": "11h 0m",
+      "seats": [
+        {
+          "who": "Adam",
+          "seat": "42H"
+        },
+        {
+          "who": "Erin",
+          "seat": "42K"
+        }
+      ],
+      "codes": [
+        {
+          "label": "Booking ref",
+          "value": "3FCMEN",
+          "primary": true
+        }
+      ],
+      "notes": [
+        "Seats can't be changed online."
+      ]
+    }
+  ],
+  "stays": [
+    {
+      "name": "Es Figueral Nou",
+      "kind": "Rural boutique hotel",
+      "city": "Mallorca",
+      "checkIn": "2026-09-03",
+      "checkOut": "2026-09-08",
+      "room": "Double Signature, terrace",
+      "board": "Room only",
+      "address": "Carretera de Montuïri a Sant Joan KM 0,7, 07230 Montuïri, Mallorca",
+      "phone": "+34971926503",
+      "email": "reservations@esfigueralnou.com",
+      "codes": [
+        {
+          "label": "Booking",
+          "value": "P5182924",
+          "primary": true
+        },
+        {
+          "label": "Ref",
+          "value": "M7193111"
+        }
+      ],
+      "phoneLabel": "+34 971 926 503",
+      "flag": "es",
+      "country": "Spain",
+      "pop1": "#FFC400",
+      "pop2": "#FFC400",
+      "arrCode": "PMI",
+      "checkInTime": "15:00",
+      "checkOutTime": "12:00",
+      "transfer": {
+        "from": "PMI",
+        "car": "23 min",
+        "transit": "25 min",
+        "transitKind": "bus"
+      }
+    },
+    {
+      "name": "Es Figueral Nou",
+      "kind": "Room change, same hotel",
+      "city": "Mallorca",
+      "checkIn": "2026-09-08",
+      "checkOut": "2026-09-09",
+      "room": "Double Standard",
+      "board": "Room only · €298",
+      "address": "Carretera de Montuïri a Sant Joan KM 0,7, 07230 Montuïri, Mallorca",
+      "phone": "+34971926503",
+      "codes": [
+        {
+          "label": "Confirmation",
+          "value": "20262713",
+          "primary": true
+        }
+      ],
+      "phoneLabel": "+34 971 926 503",
+      "flag": "es",
+      "country": "Spain",
+      "pop1": "#FFC400",
+      "pop2": "#FFC400",
+      "arrCode": "PMI",
+      "checkInTime": "15:00",
+      "checkOutTime": "12:00",
+      "transfer": {
+        "from": "PMI",
+        "car": "23 min",
+        "transit": "25 min",
+        "transitKind": "bus"
+      }
+    },
+    {
+      "name": "Michelberger Hotel",
+      "kind": "Hotel",
+      "city": "Berlin",
+      "checkIn": "2026-09-09",
+      "checkOut": "2026-09-15",
+      "room": "Loft",
+      "board": "6 nights · €1,161 prepaid",
+      "address": "Warschauer Str. 39–40, 10243 Berlin",
+      "phone": "+493029778590",
+      "email": "reservations@michelbergerhotel.com",
+      "codes": [
+        {
+          "label": "Confirmation",
+          "value": "25214SG096874",
+          "primary": true
+        }
+      ],
+      "phoneLabel": "+49 30 2977 8590",
+      "flag": "de",
+      "country": "Germany",
+      "pop1": "#FF3B30",
+      "pop2": "#FF3B30",
+      "arrCode": "BER",
+      "checkInTime": "15:00",
+      "checkOutTime": "12:00",
+      "transfer": {
+        "from": "BER",
+        "car": "22 min",
+        "transit": "36 min",
+        "transitKind": "S-Bahn"
+      }
+    },
+    {
+      "name": "John & Amanda",
+      "kind": "Staying with friends",
+      "city": "Stockholm",
+      "checkIn": "2026-09-15",
+      "checkOut": "2026-09-19",
+      "informal": true,
+      "flag": "se",
+      "country": "Sweden",
+      "pop1": "#3B9EE8",
+      "pop2": "#3B9EE8",
+      "arrCode": "ARN"
+    },
+    {
+      "name": "TBD",
+      "kind": "Not booked yet",
+      "city": "Dublin",
+      "checkIn": "2026-09-19",
+      "checkOut": "2026-09-22",
+      "pending": true,
+      "flag": "ie",
+      "country": "Ireland",
+      "pop1": "#28C88A",
+      "pop2": "#28C88A",
+      "arrCode": "DUB"
+    }
+  ],
+  "plans": [
+    {
+      "date": "2026-09-03",
+      "time": "19:30",
+      "until": "21:30",
+      "kind": "Dinner",
+      "title": "Es Pati de Montuïri",
+      "detail": "Menú degustación, 8 courses, €72 each",
+      "party": "Table for 2",
+      "address": "Es Figueral Nou Hotel, 07230 Montuïri",
+      "phone": "+34971926503",
+      "phoneLabel": "+34 971 92 65 03",
+      "notes": [
+        "Table held until 21:30. Arrive on time.",
+        "First night at the hotel. Anniversary and delayed honeymoon dinner."
+      ]
+    }
+  ],
+  "sync": {
+    "url": "https://azykpmwdkdlwmdnoxwxp.supabase.co",
+    "key": "sb_publishable_c47vEAHn1cVUHKG40k7WSQ_5Ibvnj47"
+  }
+});
 </script>
 </body>
 </html>

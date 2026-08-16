@@ -33,6 +33,7 @@ select{appearance:none}
 .flag.de{background:linear-gradient(#0F0F0F 0 33.4%,#DD0000 33.4% 66.7%,#FFCE00 66.7%)}
 .flag.ie{background:linear-gradient(90deg,#169B62 0 33.4%,#FFF 33.4% 66.7%,#FF883E 66.7%)}
 .flag.se{background-color:#006AA7;background-image:linear-gradient(90deg,transparent 0 30%,#FECC00 30% 46%,transparent 46%),linear-gradient(0deg,transparent 0 38%,#FECC00 38% 62%,transparent 62%)}
+.flag.us{background:linear-gradient(#3C3B6E,#3C3B6E) 0 0/40% 54% no-repeat,repeating-linear-gradient(#B22234 0 7.7%,#FFF 7.7% 15.4%)}
 .flag.xx{background:repeating-linear-gradient(45deg,var(--fg) 0 4px,var(--bg) 4px 8px)}
 
 #lock{min-height:100dvh;display:flex;flex-direction:column;justify-content:center}
@@ -108,6 +109,12 @@ select{appearance:none}
 .plus{display:inline!important;margin:0!important;font-size:11px!important;background:var(--p2);color:var(--bg)!important;padding:0 3px}
 
 /* condensed stay strip */
+.dhead{border:2px solid var(--edge);border-top:0;padding:12px 13px;display:flex;align-items:center;gap:10px}
+.dhead .flag{width:34px;height:22px;flex:0 0 auto}
+.dhead h2{flex:1 1 auto;min-width:0;font-size:26px;font-weight:800;font-stretch:125%;letter-spacing:-.035em;text-transform:uppercase;line-height:1;color:var(--p1)}
+.dhead .n{font-family:var(--mn);font-size:10.5px;color:var(--mute);white-space:nowrap;text-transform:uppercase}
+.code.info{background:var(--wash);border-color:var(--mute)}
+.code.info .v{font-size:13px}
 .strip{border:2px solid var(--edge);border-top:0;padding:13px}
 .strip .top{display:flex;align-items:center;gap:10px}
 .strip .flag{width:34px;height:22px;flex:0 0 auto}
@@ -285,14 +292,15 @@ function build(trip){
     const stay=trip.stays.find((s)=>s.checkIn<=date&&date<s.checkOut);
     const arriving=trip.stays.filter((s)=>s.checkIn===date);
     const ref=stay||arriving[0]||null;
+    const home=trip.meta.home||{city:"Home",country:"",flag:"xx",pop:"#4A6CF7"};
     const src=ref;
     out.push({
       date,flights,stay,arriving,
-      city:src?src.city:"Home",
-      country:src?src.country:"United States",
-      flag:src?src.flag:"xx",
-      p1:src?src.pop1:"#FFFFFF",
-      p2:src?src.pop2:"#FFFFFF"
+      city:src?src.city:home.city,
+      country:src?src.country:home.country,
+      flag:src?src.flag:home.flag,
+      p1:src?src.pop1:home.pop,
+      p2:src?src.pop2:home.pop
     });
   }
   return out;
@@ -366,7 +374,7 @@ function drawCal(){
 function drawDay(){
   const x=DAYS[cur],t=d(x.date);
   let html="";
-  if(x.flights.length) x.flights.forEach((f)=>{html+=flightHero(f)});
+  if(x.flights.length){ html+=dayHead(x); x.flights.forEach((f)=>{html+=flightHero(f)}); }
   else if(x.stay) html+=strip(x);
   x.arriving.forEach((s)=>{html+=arrivalCard(s)});
   html+=plansBlock(x);
@@ -392,22 +400,30 @@ function drawDay(){
   }));
 }
 
+function dayHead(x){
+  return `<div class="dhead"><span class="flag ${x.flag}"></span><h2>${esc(x.city)}</h2><span class="n">${esc(x.country)}</span></div>`;
+}
+
 function flightHero(f){
+  const lead=`<span class="code info"><span class="l">${esc(f.airline)}</span><span class="v">${esc(f.number)}</span></span>`;
+  const seats=f.seats&&f.seats.length
+    ? f.seats.map((s)=>`<span class="code info"><span class="l">${esc(s.who)}</span><span class="v">${esc(s.seat)}</span></span>`).join("")
+    : `<span class="code info"><span class="l">Seats</span><span class="v">At check-in</span></span>`;
   return `<div class="hero">
-    <div class="hd"><span class="lbl">Flight</span><span class="rule"></span><span class="n">${esc(f.airline)} ${esc(f.number)}</span></div>
+    <div class="hd"><span class="lbl">Flight</span><span class="rule"></span><span class="n">${esc(f.duration)}</span></div>
     <div class="leg">
       <div><b>${esc(f.from.code)}</b><span class="t">${esc(f.from.time)}</span><em>${esc(f.from.terminal||f.from.city)}</em></div>
       <div class="mid"><i></i><span>${esc(f.duration)}${f.stop?" / "+esc(f.stop):""}</span></div>
       <div class="to"><b>${esc(f.to.code)}</b><span class="t">${esc(f.to.time)}${f.to.arrivesNextDay?' <em class="plus">+1</em>':""}</span><em>${esc(f.to.city)}</em></div>
     </div>
-    ${codes(f.codes)}
-    ${f.seats?`<div class="seats">${f.seats.map((s)=>`<span>${esc(s.who)} ${esc(s.seat)}</span>`).join("")}</div>`:""}
+    ${codes(f.codes,lead)}
+    <div class="codes">${seats}</div>
     ${notes(f.notes)}
   </div>`;
 }
 
 function strip(x){
-  const s=x.stay,n=nights(s.checkIn,x.date),tot=nights(s.checkIn,s.checkOut);
+  const s=x.stay,n=nights(s.checkIn,x.date)+1,tot=nights(s.checkIn,s.checkOut);
   return `<div class="strip">
     <div class="top">
       <span class="flag ${s.flag}"></span>
@@ -426,12 +442,12 @@ function arrivalCard(s){
   const tot=nights(s.checkIn,s.checkOut);
   if(s.pending||s.informal){
     return `<div class="card">
-      <div class="hd"><span class="lbl">Checking in</span><span class="rule"></span><span class="n">${tot} NIGHTS</span></div>
+      <div class="hd"><span class="lbl">Checking in</span><span class="rule"></span><span class="n">NIGHT 1 / ${tot}</span></div>
       <p class="title">${esc(s.name)}</p><p class="sub">${esc(s.kind)}</p>${notes(s.notes)}
     </div>`;
   }
   return `<div class="card">
-    <div class="hd"><span class="lbl">Checking in</span><span class="rule"></span><span class="n">${tot} NIGHT${tot>1?"S":""}</span></div>
+    <div class="hd"><span class="lbl">Checking in</span><span class="rule"></span><span class="n">NIGHT 1 / ${tot}</span></div>
     <p class="title">${esc(s.name)}</p>
     <p class="sub">${esc(s.room)}</p>
     ${codes(s.codes)}
@@ -495,7 +511,7 @@ function wirePlans(x){
   }));
 }
 
-const codes=(l)=>!l?"":`<div class="codes">${l.map((c)=>
+const codes=(l,lead)=>!l?"":`<div class="codes">${lead||""}${l.map((c)=>
   `<button class="code${c.primary?" primary":""}" data-copy="${esc(c.value)}"><span class="l">${esc(c.label)}</span><span class="v">${esc(c.value)}</span></button>`).join("")}</div>`;
 const notes=(l)=>!l||!l.length?"":`<div class="notes">${l.map((n)=>`<p>${esc(n)}</p>`).join("")}</div>`;
 

@@ -99,14 +99,16 @@ select{appearance:none}
 .hd .n{font-family:var(--mn);font-size:10.5px;color:var(--mute);white-space:nowrap}
 .leg{display:flex;align-items:flex-end;gap:10px;margin-top:13px}
 .leg b{display:block;font-size:33px;font-weight:800;font-stretch:125%;line-height:.85;letter-spacing:-.04em}
-.leg .to b{color:var(--p1)}
+.leg a{text-decoration:none;display:block}
+.leg a b{color:var(--ac)}
+
 .leg .t{display:block;font-family:var(--mn);font-size:14px;font-weight:700;margin-top:6px}
 .leg em{display:block;font-style:normal;font-family:var(--mn);font-size:10px;color:var(--mute);margin-top:3px;text-transform:uppercase}
 .leg .to{text-align:right;margin-left:auto}
 .leg .mid{flex:1 1 auto;padding-bottom:9px;text-align:center;min-width:34px}
 .leg .mid i{display:block;height:2px;background:var(--edge)}
 .leg .mid span{display:block;font-family:var(--mn);font-size:9.5px;color:var(--mute);margin-top:6px}
-.plus{display:inline!important;margin:0!important;font-size:11px!important;background:var(--p2);color:var(--bg)!important;padding:0 3px}
+.plus{display:inline!important;margin:0!important;font-size:11px!important;background:var(--p2);color:#0A0A0A!important;padding:0 3px}
 
 /* condensed stay strip */
 .dhead{border:2px solid var(--edge);border-top:0;padding:12px 13px;display:flex;align-items:center;gap:10px}
@@ -132,9 +134,9 @@ select{appearance:none}
 .code{border:2px solid var(--edge);padding:7px 10px}
 .code .l{display:block;font-family:var(--mn);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .code .v{display:block;font-family:var(--mn);font-size:15px;font-weight:700;margin-top:2px}
-.code.primary{background:var(--p2);color:var(--bg);border-color:var(--p2)}
+.code.primary{background:var(--p2);color:#0A0A0A;border-color:var(--p2)}
 .code.primary .l{color:rgba(0,0,0,.6)}
-.code.done{background:var(--p1);border-color:var(--p1);color:var(--bg)}
+.code.done{background:var(--p1);border-color:var(--p1);color:#0A0A0A}
 .code.done .l{color:rgba(0,0,0,.6)}
 .seats{display:flex;gap:8px;margin-top:12px}
 .seats span{font-family:var(--mn);font-size:11px;border:2px solid var(--edge);padding:4px 8px;text-transform:uppercase}
@@ -156,7 +158,7 @@ select{appearance:none}
 .row{display:flex;gap:7px}
 .row input{flex:1 1 auto}
 .row .time{flex:0 0 82px}
-.form .save{background:var(--p2);color:var(--bg);padding:12px;font-weight:800;font-stretch:112%;text-transform:uppercase;text-align:center}
+.form .save{background:var(--p2);color:#0A0A0A;padding:12px;font-weight:800;font-stretch:112%;text-transform:uppercase;text-align:center}
 .form .cancel{padding:10px;text-align:center;font-family:var(--mn);font-size:11px;color:var(--mute);text-transform:uppercase}
 
 .foot{display:flex;justify-content:space-between;gap:10px;padding:12px 2px;font-family:var(--mn);font-size:10px;color:var(--mute)}
@@ -220,7 +222,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let blob=null,TRIP=null,DAYS=[],cur=0,view="day",adding=false,PLANS={},SYNC=null,STATUS="local";
+let blob=null,TRIP=null,DAYS=[],cur=0,view="day",adding=false,PLANS={},SYNC=null,STATUS="local",PORT={};
 
 const api=(path,opts={})=>fetch(SYNC.url+"/rest/v1/"+path,{
   ...opts,
@@ -308,6 +310,8 @@ function build(trip){
 
 function start(trip){
   TRIP=trip; DAYS=build(trip); loadPlans();
+  PORT={}; trip.stays.forEach((s)=>{if(s.arrCode)PORT[s.arrCode]=s.pop1});
+  if(trip.meta.home&&trip.meta.home.code)PORT[trip.meta.home.code]=trip.meta.home.pop;
   $("#lock").style.display="none";
   $("#app").classList.add("on");
   const today=iso(new Date());
@@ -400,6 +404,8 @@ function drawDay(){
   }));
 }
 
+const port=(code)=>`<a href="https://maps.google.com/?q=${encodeURIComponent(code+" airport")}" target="_blank" rel="noopener" style="--ac:${PORT[code]||"var(--fg)"}"><b>${esc(code)}</b></a>`;
+
 function dayHead(x){
   return `<div class="dhead"><span class="flag ${x.flag}"></span><h2>${esc(x.city)}</h2><span class="n">${esc(x.country)}</span></div>`;
 }
@@ -408,13 +414,13 @@ function flightHero(f){
   const lead=`<span class="code info"><span class="l">${esc(f.airline)}</span><span class="v">${esc(f.number)}</span></span>`;
   const seats=f.seats&&f.seats.length
     ? f.seats.map((s)=>`<span class="code info"><span class="l">${esc(s.who)}</span><span class="v">${esc(s.seat)}</span></span>`).join("")
-    : `<span class="code info"><span class="l">Seats</span><span class="v">At check-in</span></span>`;
+    : `<span class="code info"><span class="l">Seats</span><span class="v">TBD</span></span>`;
   return `<div class="hero">
     <div class="hd"><span class="lbl">Flight</span><span class="rule"></span><span class="n">${esc(f.duration)}</span></div>
     <div class="leg">
-      <div><b>${esc(f.from.code)}</b><span class="t">${esc(f.from.time)}</span><em>${esc(f.from.terminal||f.from.city)}</em></div>
+      <div>${port(f.from.code)}<span class="t">${esc(f.from.time)}</span><em>${esc(f.from.terminal||f.from.city)}</em></div>
       <div class="mid"><i></i><span>${esc(f.duration)}${f.stop?" / "+esc(f.stop):""}</span></div>
-      <div class="to"><b>${esc(f.to.code)}</b><span class="t">${esc(f.to.time)}${f.to.arrivesNextDay?' <em class="plus">+1</em>':""}</span><em>${esc(f.to.city)}</em></div>
+      <div class="to">${port(f.to.code)}<span class="t">${esc(f.to.time)}${f.to.arrivesNextDay?' <em class="plus">+1</em>':""}</span><em>${esc(f.to.city)}</em></div>
     </div>
     ${codes(f.codes,lead)}
     <div class="codes">${seats}</div>

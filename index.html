@@ -71,17 +71,17 @@ input[type=time]{min-height:42px}
 
 .mast{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:24px 0 14px;border-bottom:1.5px solid var(--edge)}
 .mast b{font-family:var(--sr);font-style:italic;font-weight:400;font-size:31px;line-height:1;display:block;letter-spacing:-.01em}
-.mast .grp{display:flex;align-items:center;gap:10px;line-height:1;font-family:var(--mn);font-size:12.5px;color:var(--mute);letter-spacing:.04em}
-#clk{width:28px;height:28px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
+.mast .grp{display:flex;align-items:center;gap:9px;line-height:1;font-family:var(--mn);font-size:12.5px;color:var(--mute);letter-spacing:.04em}
+#clk{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
 #clk.on{background:var(--fg);color:var(--bg)}
-#fx{width:28px;height:28px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
+#fx{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
 #fx.on{background:var(--fg);color:var(--bg)}
 .fxpanel{border:1.5px solid var(--edge);border-top:0;padding:14px var(--pad)}
 .fxrow{display:flex;align-items:center;gap:7px}
 .fxrow input{flex:1 1 0;text-align:right;font-size:17px;padding:9px}
 .fxrow span{font-family:var(--mn);font-size:13px;color:var(--mute);width:34px}
 .fxrate{font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:8px;letter-spacing:.06em}
-#invert{width:28px;height:28px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;background:linear-gradient(90deg,var(--fg) 0 50%,var(--bg) 50%)}
+#invert{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;background:linear-gradient(90deg,var(--fg) 0 50%,var(--bg) 50%)}
 
 .cal{border:1.5px solid var(--edge);border-top:0}
 .cal-head{display:flex;align-items:baseline;justify-content:space-between;padding:15px var(--pad)}
@@ -200,11 +200,12 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .pnl>.ph .flag{width:var(--lead);height:21px;flex:0 0 var(--lead)}
 .pnl>.ph .lbl{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--dp);font-size:19px;font-weight:800;font-stretch:122%;letter-spacing:-.03em;text-transform:uppercase;color:var(--p1);line-height:1}
 
-.pnl>.ph .meta{font-family:var(--mn);font-size:13px;color:var(--mute);white-space:nowrap}
+.pnl>.ph .meta{display:flex;align-items:center;font-family:var(--mn);font-size:13px;color:var(--mute);white-space:nowrap}
+.pnl>.ph .meta svg{stroke:currentColor;fill:none;stroke-width:1.8;width:14px;height:14px}
 .pnl>.ph .tw{flex:0 0 var(--lead);width:var(--lead);height:var(--lead);border:1.5px solid var(--p2);color:var(--p2);display:flex;align-items:center;justify-content:center;font-family:var(--mn);font-size:16px;line-height:1;padding-bottom:2px}
 .pnl.open>.ph .tw{background:var(--p2);color:var(--bg)}
 .pnl>.pb{padding:0 var(--pad) 18px}
-.spot{display:flex;gap:11px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--edge)}
+.spot{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--edge)}
 .spot:last-of-type{border-bottom:0}
 .spot a{flex:1 1 auto;min-width:0;text-decoration:none}
 .spot b{display:block;font-size:16px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
@@ -229,10 +230,16 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .wxin .hrs{display:flex;justify-content:space-between;font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:4px}
 .picker .locbar{border:1.5px solid var(--mute);border-top:1.5px solid var(--mute);margin:0}
 .locbar{display:flex;align-items:center;justify-content:center;width:100%;border:1.5px solid var(--edge);border-top:0;padding:14px var(--pad);font-family:var(--mn);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
-.locbar.on{color:var(--p2)}
+.locbar.on{color:var(--p2);border-color:var(--p2)}
 .far{flex:0 0 auto;text-align:right;text-decoration:none;font-family:var(--mn);font-size:13px;color:var(--fg);border:1.5px solid var(--mute);padding:5px 7px;line-height:1.35}
 .far span{display:block;white-space:nowrap}
 .far span:last-child{color:var(--mute)}
+.sinfo{flex:1 1 auto;min-width:0}
+.sinfo b{display:block;font-size:18px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
+.sinfo span{display:block;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:4px;line-height:1.5}
+.sacts{flex:0 0 auto;display:flex;align-items:center;gap:7px}
+.eye{width:42px;height:38px;border:1.5px solid var(--edge);display:flex;align-items:center;justify-content:center;color:var(--mute);padding:0}
+.eye svg{margin:0}
 .spot .acts{flex:0 0 auto;display:flex;flex-direction:column;gap:3px}
 .spot .acts button{font-family:var(--mn);color:var(--mute);border:1.5px solid var(--edge);width:42px;height:38px;display:flex;align-items:center;justify-content:center;padding:0}
 .spot.gone{opacity:.45}
@@ -283,7 +290,9 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .form .kill{color:#FF6B60;border-color:#FF6B60}
 
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;font-family:var(--mn);font-size:13px;color:var(--mute);letter-spacing:.06em}
+.foot .fbtns{display:flex;gap:16px}
 .foot button{font-family:var(--mn);font-size:13px;color:var(--mute);text-decoration:underline;letter-spacing:.06em}
+.foot button.arm{color:#FF6B60;text-decoration:none;border:1.5px solid #FF6B60;padding:4px 8px}
 
 #toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,12px);background:var(--fg);color:var(--bg);font-family:var(--mn);font-size:13px;font-weight:700;padding:10px 15px;opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;z-index:10;text-transform:uppercase}
 #toast.on{opacity:1;transform:translate(-50%,0)}
@@ -368,8 +377,9 @@ const iso=(t)=>`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${S
 const esc=(s)=>String(s).replace(/[&<>"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const nights=(a,b)=>Math.round((d(b)-d(a))/864e5);
 
-const CLOCK=`<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
-const SWAP=`<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>`;
+const MOON=`<svg class="mini" viewBox="0 0 24 24" style="margin-right:5px"><path d="M20.5 14.8A8.6 8.6 0 0 1 9.2 3.5a8.6 8.6 0 1 0 11.3 11.3Z"/></svg>`;
+const CLOCK=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
+const SWAP=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>`;
 const EYE=`<svg class="mini" viewBox="0 0 24 24" style="margin:0"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>`;
 const EYEOFF=`<svg class="mini" viewBox="0 0 24 24" style="margin:0"><path d="M4 4l16 16"/><path d="M9.5 9.6A2.6 2.6 0 0 0 12 14.6"/><path d="M6.6 6.8C3.9 8.4 2 12 2 12s3.6 6 10 6c1.7 0 3.2-.4 4.5-1"/><path d="M19.5 15.2C21.2 13.8 22 12 22 12s-3.6-6-10-6c-.9 0-1.7.1-2.5.3"/></svg>`;
 const WALK=`<svg class="mini" viewBox="0 0 24 24"><circle cx="13" cy="4" r="1.6"/><path d="M11 21l2-6-3-3 1-5 3 3 3 1"/><path d="M10 12l-2 4"/><path d="M13 15l3 2 1 4"/></svg>`;
@@ -398,7 +408,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let ME=null,pick=null,calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},wxView=null,units="C",FX=null,fxOpen=false;
+let ME=null,pick=null,pasteText="",calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},wxView=null,units="C",FX=null,fxOpen=false;
 let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const loadPlans=()=>{
@@ -522,10 +532,26 @@ function start(trip){
   cur=i>=0?i:(today>TRIP.meta.end?DAYS.length-1:0);
   $("#app").innerHTML=`
     <div class="mast"><b>Europe 2026</b>
-      <span class="grp">${countdown()}<button id="clk" aria-label="Time format">${CLOCK}</button><button id="fx" aria-label="Currency">${SWAP}</button><button id="invert" aria-label="Invert colours"></button></span></div>
+      <span class="grp"><button id="clk" aria-label="Time format">${CLOCK}</button><button id="fx" aria-label="Currency">${SWAP}</button><button id="invert" aria-label="Invert colours"></button></span></div>
     <div id="fxbox"></div>
     <div id="screen"></div>
-    <div class="foot"><span id="sync">…</span><button id="forget">LOCK THIS DEVICE</button></div>`;
+    <div class="foot"><span id="sync">…</span><span class="fbtns"><button id="clearplans">CLEAR PLANS</button><button id="forget">LOCK THIS DEVICE</button></span></div>`;
+  let armed=false,armT;
+  $("#clearplans").addEventListener("click",async()=>{
+    const b=$("#clearplans");
+    if(!armed){
+      armed=true; b.classList.add("arm"); b.textContent="TAP AGAIN TO CLEAR";
+      clearTimeout(armT); armT=setTimeout(()=>{armed=false;b.classList.remove("arm");b.textContent="CLEAR PLANS"},4000);
+      return;
+    }
+    clearTimeout(armT); armed=false; b.classList.remove("arm"); b.textContent="CLEARING";
+    const days=Object.keys(PLANS);
+    PLANS={}; savePlans();
+    for(const dt of days){ await push(dt); }
+    b.textContent="CLEAR PLANS";
+    editing=null; pick=null; draw();
+    toast(days.length?"Cleared "+days.length+" days":"Nothing to clear");
+  });
   $("#forget").addEventListener("click",()=>{try{localStorage.removeItem(KEY)}catch{};location.reload()});
   $("#clk").classList.toggle("on",clock12);
   $("#clk").addEventListener("click",()=>{
@@ -860,63 +886,81 @@ function cityList(){
   const out=[]; TRIP.stays.forEach((s)=>{if(!out.some((x)=>x.city===s.city))out.push(s)}); return out;
 }
 
+function placeRow(sp,i,city,date,hidden){
+  return `<div class="spot${hidden?" gone":""}">
+    <div class="sinfo">
+      <b>${esc(sp.name)}</b>
+      <span>${metaLine(sp,date)}</span>
+    </div>
+    <div class="sacts">
+      ${links(sp)}
+      <button class="eye" data-seenflip="${esc(city)}|${i}" aria-label="${hidden?"Unhide":"Hide"}">${hidden?EYEOFF:EYE}</button>
+    </div>
+  </div>`;
+}
+
 function drawPlaces(){
-  const cities=cityList();
-  if(!pickCity) pickCity=DAYS[cur].city;
-  const list=(SPOTS[pickCity]||[]);
   const x=DAYS[cur];
-  const body=SECTIONS.map((sec)=>{
-    const items=list.map((sp,i)=>({sp,i})).filter(({sp})=>sp.sec===sec);
-    const live=items.filter(({sp})=>!sp.done), done=items.filter(({sp})=>sp.done);
-    const open=openSec.has("m:"+sec);
-    const form=(pasting==="m:"+sec)?`<div class="paste">
-        <textarea id="s-paste" placeholder="Paste a Google Maps link" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
-        <input id="s-name" placeholder="Name" autocomplete="off" autocorrect="off" spellcheck="false">
-        <input id="s-note" placeholder="Note (optional)" autocomplete="off" autocorrect="off" spellcheck="false">
-        <button class="save" id="s-save">Add to ${esc(sec)} in ${esc(pickCity)}</button>
+  const cities=cityList();
+  if(!pickCity) pickCity=x.city;
+
+  const body=cities.map((c)=>{
+    const list=SPOTS[c.city]||[];
+    const live=list.map((sp,i)=>({sp,i})).filter(({sp})=>!sp.done);
+    const hid=list.map((sp,i)=>({sp,i})).filter(({sp})=>sp.done);
+    const id="city:"+c.city;
+    const adding=pasting===id;
+    const parsed=adding?parseSpot(pasteText):{sec:null};
+    const inner=`
+      ${live.length?live.map((o)=>placeRow(o.sp,o.i,c.city,x.date)).join(""):`<p class="empty">Nothing saved yet.</p>`}
+      ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
+        ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
+      ${adding?`<div class="picker">
+        <input id="s-paste" value="${esc(pasteText)}" placeholder="Paste a Google Maps link, or type a name" autocomplete="off" autocorrect="off" spellcheck="false">
+        <div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick&&pick.sec||parsed.sec||SECTIONS[1])===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+        <button class="save" id="s-save">Add to ${esc(c.city)}</button>
         <button class="cancel" id="s-cancel">Cancel</button>
-      </div>`:"";
-    return `<div class="sect">
-      <button class="bar" data-sec="m:${esc(sec)}"><span class="lbl">${esc(sec)}</span><span class="cnt">${live.length||""}</span><span class="tw">${open?"&minus;":"+"}</span></button>
-      ${open?`<div class="inner">
-        ${live.length?live.map(({sp,i})=>spotRow(sp,i,pickCity)).join(""):`<p class="empty">Nothing yet.</p>`}
-        ${done.length?`<button class="seenbar" data-seen="m:${esc(sec)}">${seenOpen.has("m:"+sec)?"&minus;":"+"} ${done.length} seen</button>
-          ${seenOpen.has("m:"+sec)?done.map(({sp,i})=>spotRow(sp,i,pickCity,true)).join(""):""}`:""}
-        ${form||`<button class="addrow" data-add="m:${esc(sec)}">+ Add a place</button>`}
-      </div>`:""}
-    </div>`;
+      </div>`:`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
+    return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1})}</div>`;
   }).join("");
 
   $("#screen").innerHTML=`<div style="--p1:${x.p1};--p2:${x.p2}">
-    <div class="chips">${cities.map((c)=>`<button class="${c.city===pickCity?"on":""}" data-city="${esc(c.city)}"><i class="flag ${c.flag}"></i>${esc(c.city)}</button>`).join("")}</div>
-    ${locBar()}
+    <button class="locbar${ME?" on":""}" id="loc">${LOC}${ME?"Distances on &middot; tap to refresh":"Show how far things are"}</button>
     ${body}
     ${tabs()}
   </div>`;
 
-  $("#screen").querySelectorAll("[data-city]").forEach((b)=>b.addEventListener("click",()=>{pickCity=b.dataset.city;pasting=null;draw()}));
   wireTabs();
   if($("#loc")) $("#loc").addEventListener("click",askLoc);
-  $("#screen").querySelectorAll("[data-sec]").forEach((b)=>b.addEventListener("click",()=>{
-    const k=b.dataset.sec; openSec.has(k)?openSec.delete(k):openSec.add(k);
-    if(pasting&&pasting!==k)pasting=null; draw();
+  $("#screen").querySelectorAll("[data-pnl]").forEach((b)=>b.addEventListener("click",()=>{
+    const k=b.dataset.pnl;
+    openPanel=openPanel===k?null:k;
+    if(pasting&&pasting!==k)pasting=null;
+    draw();
   }));
   $("#screen").querySelectorAll("[data-seen]").forEach((b)=>b.addEventListener("click",()=>{
-    const k=b.dataset.seen.slice(2); seenOpen.has("m:"+k)?seenOpen.delete("m:"+k):seenOpen.add("m:"+k); draw();
+    const k=b.dataset.seen; seenOpen.has(k)?seenOpen.delete(k):seenOpen.add(k); draw();
   }));
-  $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{pasting=b.dataset.add;draw();$("#s-paste").focus()}));
+  $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{
+    pasting=b.dataset.add; pasteText=""; pick={sec:null}; openPanel=b.dataset.add; draw();
+  }));
   wireSpotActions(()=>draw());
-  if(pasting&&pasting.startsWith("m:")){
-    const fill=()=>{const p=parseSpot($("#s-paste").value); if(p.name&&!$("#s-name").value)$("#s-name").value=p.name;};
-    $("#s-paste").addEventListener("input",fill);
-    $("#s-paste").addEventListener("paste",()=>setTimeout(fill,0));
-    $("#s-cancel").addEventListener("click",()=>{pasting=null;draw()});
+  if(pasting&&pasting.indexOf("city:")===0){
+    const city=pasting.slice(5);
+    const inp=$("#s-paste");
+    inp.addEventListener("input",()=>{ pasteText=inp.value; });
+    inp.addEventListener("paste",()=>setTimeout(()=>{pasteText=inp.value;pick={sec:null};draw()},0));
+    $("#s-cancel").addEventListener("click",()=>{pasting=null;pasteText="";draw()});
+    $("#screen").querySelectorAll("[data-psec]").forEach((b)=>b.addEventListener("click",()=>{
+      pasteText=$("#s-paste").value; pick={sec:b.dataset.psec}; draw();
+    }));
     $("#s-save").addEventListener("click",()=>{
-      const p=parseSpot($("#s-paste").value);
-      const name=$("#s-name").value.trim()||p.name;
-      if(!name){ toast("Needs a name"); return; }
-      (SPOTS[pickCity]=SPOTS[pickCity]||[]).push({name,url:p.url,sec:pasting.slice(2),lat:p.lat,lng:p.lng,note:($("#s-note").value||"").trim()});
-      saveSpots(); pasting=null; draw(); push("spots:"+pickCity); toast("Added to "+pickCity);
+      const txt=$("#s-paste").value;
+      const pr=parseSpot(txt);
+      const name=pr.name||txt.trim();
+      if(!name){ toast("Needs a name or a link"); return; }
+      (SPOTS[city]=SPOTS[city]||[]).push({name,url:pr.url||"",sec:(pick&&pick.sec)||pr.sec,lat:pr.lat,lng:pr.lng});
+      saveSpots(); pasting=null; pasteText=""; draw(); push("spots:"+city); toast("Added to "+city);
     });
   }
 }
@@ -1025,7 +1069,7 @@ function placeCard(x){
   const s=x.arriving[0]||x.stay;
   if(!s) return panel("place",esc(x.city),esc(x.country),`<p class="sub">Travelling</p>`,{flag:x.flag,city:1});
   const tot=nights(s.checkIn,s.checkOut),n=arriving?1:nights(s.checkIn,x.date)+1;
-  return panel("place",esc(s.city),`Night ${n} / ${tot}`,`${byeLine(x)}${stayBody(s,arriving)}`,{flag:s.flag,city:1});
+  return panel("place",esc(s.city),`${MOON}${n} / ${tot}`,`${byeLine(x)}${stayBody(s,arriving)}`,{flag:s.flag,city:1});
 }
 
 function hoursFor(sp,date){
@@ -1146,7 +1190,7 @@ function plansBlock(x){
 
 function wirePlans(x){
   const add=$("#p-add");
-  if(add) add.addEventListener("click",()=>{pick={q:"",time:"",end:"",sec:null};editing=null;drawDay();$("#pk-q").focus()});
+  if(add) add.addEventListener("click",()=>{pick={q:"",time:"",end:"",sec:null};editing=null;drawDay()});
 
   $("#screen").querySelectorAll("[data-editplan]").forEach((b)=>b.addEventListener("click",()=>{
     editing=+b.dataset.editplan; pick=null; drawDay();

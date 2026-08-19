@@ -129,17 +129,11 @@ input[type=time]{min-height:42px}
 
 
 
-.place .top{display:flex;align-items:center;gap:9px}
-.place .flag{width:26px;height:17px;flex:0 0 auto}
-.place h2{flex:1 1 auto;min-width:0;line-height:1;color:var(--p1)}
-.place .n{font-family:var(--mn);font-size:12.5px;color:var(--mute);white-space:nowrap;text-transform:uppercase}
 .hotel{font-size:25px;font-weight:800;font-stretch:122%;text-transform:uppercase;letter-spacing:-.035em;line-height:1;color:var(--fg);margin-top:9px}
-.place h2{font-size:22px;font-weight:800;font-stretch:122%;text-transform:uppercase;letter-spacing:-.03em}
 .place .top .flags{display:flex;align-items:center;gap:5px;flex:0 0 auto}
 .place .top .flags em{font-style:normal;font-family:var(--mn);font-size:13px;color:var(--mute)}
 
 
-.card{border:1.5px solid var(--edge);border-top:0;padding:15px var(--pad)}
 #screen>div>div:first-child{border-top:1.5px solid var(--edge)}
 .hd{display:flex;align-items:center;gap:9px}
 .hd .lbl{color:var(--p2);white-space:nowrap}
@@ -189,8 +183,6 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .notes{margin-top:11px;padding-top:10px;border-top:1px solid var(--edge);font-family:var(--mn);font-size:13px;color:var(--mute);line-height:1.6}
 .notes p+p{margin-top:2px}
 
-.place h2 button{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;width:100%}
-.place h2 .chev{font-family:var(--mn);font-size:13px;color:var(--mute);margin-left:6px;letter-spacing:0}
 .pnl{border:1.5px solid var(--edge);border-top:0}
 .pnl>.ph{display:flex;align-items:center;gap:var(--gap);padding:15px var(--pad);width:100%;min-height:62px}
 .pnl>.ph .phmain{flex:1 1 auto;display:flex;align-items:center;gap:var(--gap);min-width:0;padding:0}
@@ -219,12 +211,14 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .wxin .temp em{font-style:normal;font-family:var(--mn);font-size:13px;color:var(--p2);border:1.5px solid var(--p2);padding:1px 3px;margin-left:2px}
 .wxin .at{font-family:var(--mn);font-size:13px;color:var(--mute);line-height:1.5}
 .wxin .pill{margin-left:auto;font-family:var(--mn);font-size:13px;border:1.5px solid var(--mute);padding:5px 7px;white-space:nowrap}
-.wxline{display:block;width:100%;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:10px;padding-top:9px;border-top:1px solid var(--edge);line-height:1.5;text-align:left}
+.wxline{display:flex;align-items:center;gap:8px;width:100%;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:10px;padding-top:9px;border-top:1px solid var(--edge);line-height:1.5;text-align:left}
 .wxline b{color:var(--fg);font-weight:700}
-.wxline.tap{color:var(--p2)}
-.wxbar{display:flex;align-items:center;justify-content:space-between;width:100%;padding-bottom:4px}
+.wxline.tap{color:var(--fg)}
+.wxline .chev{font-style:normal;margin-left:auto;color:var(--mute);font-size:17px;line-height:1}
+.wxbar{display:flex;align-items:center;justify-content:space-between;width:100%;padding-bottom:2px}
 .wxbar .x{font-family:var(--mn);font-size:13px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
-.wxin .strip{display:flex;align-items:flex-end;gap:2px;height:38px;margin-top:8px}
+.wxin .strip{display:flex;align-items:flex-end;gap:3px;height:52px;margin-top:12px;position:relative}
+.thresh{position:absolute;left:0;right:0;height:1px;border-top:1px dashed var(--mute);opacity:.7}
 .wxin .strip i{flex:1 1 0;background:var(--mute);opacity:.32;display:block}
 .wxin .strip i.hi{opacity:1;background:var(--p2)}
 .wxin .hrs{display:flex;justify-content:space-between;font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:4px}
@@ -237,11 +231,11 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .sinfo{flex:1 1 auto;min-width:0}
 .sinfo b{display:block;font-size:18px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
 .sinfo span{display:block;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:4px;line-height:1.5}
+.l2{display:block;font-style:normal;margin-top:2px}
+.shut{font-style:normal;color:#FF6B60}
 .sacts{flex:0 0 auto;display:flex;align-items:center;gap:7px}
 .eye{width:42px;height:38px;border:1.5px solid var(--edge);display:flex;align-items:center;justify-content:center;color:var(--mute);padding:0}
 .eye svg{margin:0}
-.spot .acts{flex:0 0 auto;display:flex;flex-direction:column;gap:3px}
-.spot .acts button{font-family:var(--mn);color:var(--mute);border:1.5px solid var(--edge);width:42px;height:38px;display:flex;align-items:center;justify-content:center;padding:0}
 .spot.gone{opacity:.45}
 .spot.gone b{text-decoration:line-through}
 .spot .note{display:block;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:3px;line-height:1.45;text-decoration:none}
@@ -258,6 +252,7 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .ptop b{flex:1 1 auto;font-size:19px;font-weight:800;font-stretch:118%;text-transform:uppercase;letter-spacing:-.025em;line-height:1.1}
 .ptop .edit{flex:0 0 auto;font-family:var(--mn);font-size:12.5px;color:var(--mute);letter-spacing:.06em;border:1.5px solid var(--edge);padding:6px 10px}
 .pmeta{font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:5px;line-height:1.5}
+.pmeta .l2{margin-top:2px}
 .pnote{font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:7px;line-height:1.5}
 .prow{display:flex;align-items:center;gap:7px;margin-top:11px;flex-wrap:wrap}
 .tbox{font-family:var(--mn);font-size:14px;font-weight:700;border:1.5px solid var(--fg);padding:7px 10px;white-space:nowrap}
@@ -273,8 +268,6 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .picker .chips.sec{display:flex;flex-wrap:wrap;gap:5px;padding:0;border:0}
 .picker .chips.sec button{font-family:var(--mn);font-size:12.5px;border:1.5px solid var(--mute);padding:8px 10px;color:var(--mute);text-transform:none;letter-spacing:0}
 .picker .chips.sec button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.picker .opts{max-height:none}
-.gh{font-family:var(--mn);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:14px 0 6px}
 .opt{display:block;width:100%;padding:13px 0;border-bottom:1px solid var(--edge);text-align:left}
 .opt b{display:block;font-size:18px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
 .opt span{display:block;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:4px;line-height:1.5}
@@ -377,6 +370,7 @@ const iso=(t)=>`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${S
 const esc=(s)=>String(s).replace(/[&<>"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const nights=(a,b)=>Math.round((d(b)-d(a))/864e5);
 
+const CARICON=`<svg class="mini" viewBox="0 0 24 24" style="margin-right:5px"><path d="M4 15v-3l2-5h12l2 5v3"/><path d="M3 15h18v3H3z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></svg>`;
 const MOON=`<svg class="mini" viewBox="0 0 24 24" style="margin-right:5px"><path d="M20.5 14.8A8.6 8.6 0 0 1 9.2 3.5a8.6 8.6 0 1 0 11.3 11.3Z"/></svg>`;
 const CLOCK=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
 const SWAP=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>`;
@@ -510,8 +504,13 @@ function build(trip){
     const stay=trip.stays.find((s)=>s.checkIn<=date&&date<s.checkOut);
     const arriving=trip.stays.filter((s)=>s.checkIn===date);
     const leaving=trip.stays.filter((s)=>s.checkOut===date&&s.checkOutTime);
+    const cars=(trip.cars||[]).map((c)=>{
+      if(c.pickup&&c.pickup.date===date) return {...c,leg:"pickup"};
+      if(c.dropoff&&c.dropoff.date===date) return {...c,leg:"dropoff"};
+      return null;
+    }).filter(Boolean);
     const src=stay||arriving[0]||null;
-    out.push({date,flights,stay,arriving,leaving,
+    out.push({date,flights,stay,arriving,leaving,cars,
       city:src?src.city:home.city,country:src?src.country:home.country,
       flag:src?src.flag:home.flag,p1:src?src.pop1:home.pop,p2:src?src.pop2:home.pop});
   }
@@ -640,10 +639,6 @@ function far(sp){
   return `<a class="far" href="${dir}" target="_blank" rel="noopener"><span>${fmtKm(k)}</span><span>${legs}</span></a>`;
 }
 
-function locBar(){
-  if(ME) return `<button class="locbar on" id="loc">${LOC}Distances from where you are &middot; tap to refresh</button>`;
-  return `<button class="locbar" id="loc">${LOC}Show how far things are</button>`;
-}
 
 function wireSpotActions(redraw){
   $("#screen").querySelectorAll("[data-rm]").forEach((b)=>b.addEventListener("click",()=>{
@@ -693,14 +688,19 @@ async function getWx(x){
     if(!r.ok)throw 0;
     const j=await r.json();
     if(!j.daily||j.daily.time.length===0)throw 0;
-    const hrs=j.hourly.time.map((t,i)=>({h:t.slice(11,16),temp:j.hourly.temperature_2m[i],pop:j.hourly.precipitation_probability[i],uv:j.hourly.uv_index[i]}));
-    const hi=Math.max(...hrs.map((z)=>z.temp)), lo=Math.min(...hrs.map((z)=>z.temp));
+    const hrs=j.hourly.time.map((t,i)=>({h:t.slice(11,16),temp:j.hourly.temperature_2m[i],pop:j.hourly.precipitation_probability[i],uv:j.hourly.uv_index[i]}))
+      .filter((z)=>z.temp!=null);
+    if(!hrs.length) throw 0;
+    const temps=hrs.map((z)=>z.temp);
+    const hi=j.daily.temperature_2m_max[0]!=null?j.daily.temperature_2m_max[0]:Math.max(...temps);
+    const lo=j.daily.temperature_2m_min[0]!=null?j.daily.temperature_2m_min[0]:Math.min(...temps);
+    const near=(v)=>hrs.reduce((a,b)=>Math.abs(b.temp-v)<Math.abs(a.temp-v)?b:a).h;
     const over=hrs.filter((z)=>z.uv>2);
     WX[key]={
       hi,lo,
-      hiAt:(hrs.find((z)=>z.temp===hi)||{}).h,loAt:(hrs.find((z)=>z.temp===lo)||{}).h,
-      pop:j.daily.precipitation_probability_max[0],
-      uvMax:Math.max(...hrs.map((z)=>z.uv||0)),
+      hiAt:near(hi),loAt:near(lo),
+      pop:j.daily.precipitation_probability_max[0]||0,
+      uvMax:Math.max(0,...hrs.map((z)=>z.uv||0)),
       uvFrom:over.length?over[0].h:null, uvTo:over.length?over[over.length-1].h:null,
       hrs
     };
@@ -710,18 +710,17 @@ async function getWx(x){
 
 function bars(hrs,pick,max,hot){
   const win=hrs.filter((z)=>+z.h.slice(0,2)>=6&&+z.h.slice(0,2)<=21);
-  return `<div class="strip">${win.map((z)=>{
+  if(!win.length) return "";
+  const line=Math.round(hot/max*100);
+  const marks=[0,Math.floor((win.length-1)/3),Math.floor(2*(win.length-1)/3),win.length-1]
+    .filter((v,i,a)=>a.indexOf(v)===i).map((i)=>win[i].h);
+  return `<div class="strip"><span class="thresh" style="bottom:${line}%"></span>${win.map((z)=>{
       const v=pick(z)||0, pc=Math.max(3,Math.round(v/max*100));
       return `<i class="${v>hot?"hi":""}" style="height:${pc}%"></i>`;
     }).join("")}</div>
-    <div class="hrs"><span>06</span><span>11</span><span>16</span><span>21</span></div>`;
+    <div class="hrs">${marks.map((h)=>`<span>${esc(T(h))}</span>`).join("")}</div>`;
 }
 
-function wxSummary(x){
-  const g=geoFor(x), w=WX[g.city+"|"+x.date];
-  if(w===undefined||w===false||w==null) return "";
-  return `${tC(w.hi)} / ${tC(w.lo)}`;
-}
 
 function weatherBox(x){
   const g=geoFor(x), w=WX[g.city+"|"+x.date];
@@ -745,11 +744,14 @@ function weatherBox(x){
 
   return `<div class="wxin">
     <div class="wxtop">
-      <button class="temp" id="wx-units"><b>${tC(w.hi)}</b><span>${tC(w.lo)}</span><em>${units==="C"?"\u00B0C":"\u00B0F"}</em></button>
-      <span class="at">HIGH ${esc(T(w.hiAt||""))}<br>LOW ${esc(T(w.loAt||""))}</span>
-      <button class="pill" data-wx="pop">${w.pop}% rain</button>
+      <span class="tcol"><b>${tC(w.hi)}</b><em>High ${esc(T(w.hiAt||""))}</em></span>
+      <span class="tcol lo"><b>${tC(w.lo)}</b><em>Low ${esc(T(w.loAt||""))}</em></span>
+      <span class="wxbtns">
+        <button class="unit" id="wx-units">${units==="C"?"\u00B0C":"\u00B0F"}</button>
+        <button class="pill" data-wx="pop">${w.pop}% rain</button>
+      </span>
     </div>
-    <button class="wxline tap" data-wx="uv">${w.uvFrom?`Wear sunscreen from <b>${T(w.uvFrom)}</b> to <b>${T(w.uvTo)}</b>`:"No sunscreen needed today"}</button>
+    <button class="wxline tap" data-wx="uv">${w.uvFrom?`Wear sunscreen <b>${T(w.uvFrom)}</b> to <b>${T(w.uvTo)}</b>`:"No sunscreen needed today"}<i class="chev">&rsaquo;</i></button>
   </div>`;
 }
 
@@ -832,50 +834,7 @@ function panel(id,label,meta,body,opts){
   </div>`;
 }
 
-function sections(x){
-  const city=x.city, list=SPOTS[city]||[];
-  return SECTIONS.map((sec)=>{
-    const items=list.map((sp,i)=>({sp,i})).filter(({sp})=>sp.sec===sec);
-    const live=items.filter(({sp})=>!sp.done), done=items.filter(({sp})=>sp.done);
-    const open=openPanel==="sec:"+sec;
-    const form=(pasting===sec)?`<div class="paste">
-        <textarea id="s-paste" placeholder="Paste a Google Maps link" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
-        <input id="s-name" placeholder="Name" autocomplete="off" autocorrect="off" spellcheck="false">
-        <input id="s-note" placeholder="Note (optional)" autocomplete="off" autocorrect="off" spellcheck="false">
-        <button class="save" id="s-save">Add to ${esc(sec)}</button>
-        <button class="cancel" id="s-cancel">Cancel</button>
-      </div>`:"";
-    return panel("sec:"+sec,esc(sec),live.length||"",
-      `${live.length?live.map(({sp,i})=>spotRow(sp,i,city)).join(""):`<p class="empty">Nothing yet.</p>`}
-       ${done.length?`<button class="seenbar" data-seen="${esc(sec)}">${seenOpen.has(sec)?"&minus;":"+"} ${done.length} hidden</button>
-         ${seenOpen.has(sec)?done.map(({sp,i})=>spotRow(sp,i,city,true)).join(""):""}`:""}
-       ${form||`<button class="addrow" data-add="${esc(sec)}">+ Add a place</button>`}`);
-  }).join("");
-}
 
-function wireSections(x){
-  if($("#loc")) $("#loc").addEventListener("click",askLoc);
-  $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{
-    pasting=b.dataset.add; drawDay(); $("#s-paste").focus();
-  }));
-  wireSpotActions(()=>drawDay());
-  $("#screen").querySelectorAll("[data-seen]").forEach((b)=>b.addEventListener("click",()=>{
-    const k=b.dataset.seen; seenOpen.has(k)?seenOpen.delete(k):seenOpen.add(k); drawDay();
-  }));
-  if(pasting){
-    const fill=()=>{const p=parseSpot($("#s-paste").value); if(p.name&&!$("#s-name").value)$("#s-name").value=p.name;};
-    $("#s-paste").addEventListener("input",fill);
-    $("#s-paste").addEventListener("paste",()=>setTimeout(fill,0));
-    $("#s-cancel").addEventListener("click",()=>{pasting=null;drawDay()});
-    $("#s-save").addEventListener("click",()=>{
-      const p=parseSpot($("#s-paste").value);
-      const name=$("#s-name").value.trim()||p.name;
-      if(!name){ toast("Needs a name"); return; }
-      (SPOTS[x.city]=SPOTS[x.city]||[]).push({name,url:p.url,sec:pasting,lat:p.lat,lng:p.lng,note:($("#s-note").value||"").trim()});
-      saveSpots(); pasting=null; drawDay(); push("spots:"+x.city); toast("Added");
-    });
-  }
-}
 
 const tabs=()=>`<div class="tabs">
     <button class="${calTab==="cal"?"on":""}" data-tab="cal">Calendar</button>
@@ -976,8 +935,10 @@ function drawDay(){
   if(openPanel===undefined) openPanel=def;
   if(x.flights.length){
     x.flights.forEach((f,i)=>{html+=flightHero(f,i)});
+    (x.cars||[]).forEach((c,i)=>{html+=carCard(c,i)});
     if(x.arriving.length) html+=placeCard(x);
   }else{
+    (x.cars||[]).forEach((c,i)=>{html+=carCard(c,i)});
     html+=placeCard(x);
   }
   html+=plansBlock(x);
@@ -1010,7 +971,6 @@ function drawDay(){
     wxView=null; drawDay();
   }));
   if($("#loc")) $("#loc").addEventListener("click",askLoc);
-  wireSections(x);
   wirePlans(x);
   $("#screen").querySelectorAll(".code[data-copy]").forEach((el)=>el.addEventListener("click",async()=>{
     try{
@@ -1064,6 +1024,22 @@ function stayBody(s,arriving){
     </div>`;
 }
 
+function carCard(c,i){
+  const pick=c.leg==="pickup";
+  const leg=pick?c.pickup:c.dropoff;
+  const other=pick?c.dropoff:c.pickup;
+  const word=pick?"Pick up":"Drop off";
+  return panel("car"+i,"Car",`${CARICON}${word} ${esc(T(leg.time))}`,
+    `<p class="hotel">${esc(c.vehicle)}</p>
+     <p class="sub">${esc(c.company)}</p>
+     <p class="checkin">${word} ${esc(T(leg.time))} &middot; ${esc(leg.place)}</p>
+     ${codes(c.codes)}
+     <div class="low">
+       <span class="who">${pick?"Back":"Collected"} ${esc(fmtShort(other.date))} ${esc(T(other.time))}</span>
+       <a class="ico" href="https://maps.google.com/?q=${encodeURIComponent(leg.place)}" target="_blank" rel="noopener" aria-label="Open in Maps">${PIN}</a>
+     </div>`);
+}
+
 function placeCard(x){
   const arriving=!!x.arriving.length;
   const s=x.arriving[0]||x.stay;
@@ -1078,13 +1054,29 @@ function hoursFor(sp,date){
   return h?Trange(h):"Closed today";
 }
 
+function closedDays(sp){
+  if(!sp.hours||!sp.hours.some(Boolean)) return "";
+  const on=sp.hours.map((h,i)=>h?DOW[i]:null).filter(Boolean);
+  const off=sp.hours.map((h,i)=>h?null:DOW[i]).filter(Boolean);
+  if(!off.length) return "";
+  return on.length<=2?on.join(" and ")+" only":"closed "+off.join(", ");
+}
+
 function metaLine(sp,date){
-  const bits=[];
-  if(sp.type) bits.push(esc(sp.type));
-  if(ME&&sp.lat!=null) bits.push(fmtKm(km(ME.lat,ME.lng,sp.lat,sp.lng)));
+  const a=[];
+  if(sp.type) a.push(esc(sp.type));
+  if(sp.price) a.push(esc(sp.price));
+  if(sp.meals) a.push(esc(sp.meals));
+  if(ME&&sp.lat!=null) a.push(fmtKm(km(ME.lat,ME.lng,sp.lat,sp.lng)));
+
+  const b=[];
   const h=hoursFor(sp,date);
-  if(h) bits.push(esc(h));
-  return bits.join(" &middot; ");
+  if(h) b.push(h==="Closed today"?`<em class="shut">Closed today</em>`:esc(h));
+  const c=closedDays(sp);
+  if(c) b.push(esc(c));
+  if(sp.note) b.push(esc(sp.note));
+
+  return a.join(" &middot; ")+(b.length?`<em class="l2">${b.join(" &middot; ")}</em>`:"");
 }
 
 function links(sp){
@@ -1208,7 +1200,7 @@ function wirePlans(x){
     $("#screen").querySelectorAll("[data-pickspot]").forEach((b)=>b.addEventListener("click",()=>{
       sync();
       const sp=(SPOTS[x.city]||[])[+b.dataset.pickspot];
-      addPlan(x,{where:sp.name,type:sp.type||"",url:sp.url,lat:sp.lat,lng:sp.lng,phone:sp.phone||"",hours:sp.hours||null});
+      addPlan(x,{where:sp.name,type:sp.type||"",price:sp.price||"",meals:sp.meals||"",url:sp.url,lat:sp.lat,lng:sp.lng,phone:sp.phone||"",hours:sp.hours||null});
     }));
 
     const nw=$("#pk-new");
@@ -1260,7 +1252,7 @@ function drawDay2(){
   $("#screen").querySelectorAll("[data-pickspot]").forEach((b)=>b.addEventListener("click",()=>{
     pick.q=$("#pk-q").value; pick.time=$("#pk-time").value; pick.end=$("#pk-end").value;
     const sp=(SPOTS[x.city]||[])[+b.dataset.pickspot];
-    addPlan(x,{where:sp.name,type:sp.type||"",url:sp.url,lat:sp.lat,lng:sp.lng,phone:sp.phone||"",hours:sp.hours||null});
+    addPlan(x,{where:sp.name,type:sp.type||"",price:sp.price||"",meals:sp.meals||"",url:sp.url,lat:sp.lat,lng:sp.lng,phone:sp.phone||"",hours:sp.hours||null});
   }));
   if(cur_) cur_.addEventListener("click",()=>$("#pk-new").click());
 }

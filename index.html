@@ -70,11 +70,15 @@ input[type=time]{min-height:42px}
 #app.on{display:block}
 
 .mast{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:24px 0 14px;border-bottom:1.5px solid var(--edge)}
-.mast b{font-family:var(--sr);font-style:italic;font-weight:400;font-size:31px;line-height:1;display:block;letter-spacing:-.01em}
+.mast b{font-size:31px;font-weight:800;font-stretch:122%;letter-spacing:-.04em;text-transform:uppercase;line-height:1;display:block;color:var(--mc,var(--fg));letter-spacing:-.01em}
 .mast .grp{display:flex;align-items:center;gap:9px;line-height:1;font-family:var(--mn);font-size:12.5px;color:var(--mute);letter-spacing:.04em}
+#wxmode{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
+#units{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;font-family:var(--mn);font-size:12.5px;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
+#home{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);text-decoration:none}
+#home.off{opacity:.35;pointer-events:none}
 #clk{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
 #clk.on{background:var(--fg);color:var(--bg)}
-#fx{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0}
+#fx{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--fg);padding:0;font-family:var(--mn);font-size:15px}
 #fx.on{background:var(--fg);color:var(--bg)}
 .fxpanel{border:1.5px solid var(--edge);border-top:0;padding:14px var(--pad)}
 .fxrow{display:flex;align-items:center;gap:7px}
@@ -88,21 +92,27 @@ input[type=time]{min-height:42px}
 .cal-head b{font-size:17px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.02em}
 .cal-head span{font-family:var(--mn);font-size:12.5px;color:var(--mute)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--edge)}
-.dow{font-family:var(--mn);font-size:13px;color:var(--mute);text-align:center;padding:9px 0;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge)}
+.dow{font-family:var(--mn);font-size:11px;color:var(--mute);text-align:center;padding:9px 0;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge)}
 .dow:nth-child(7n){border-right:0}
-.cell{aspect-ratio:1/1.02;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--mn);font-size:13.5px;color:var(--mute);border-right:1px solid var(--edge);border-bottom:1px solid var(--edge);background:var(--bg);position:relative}
+.cell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge);background:var(--bg);position:relative;padding:0}
+.cell.trip{background:color-mix(in srgb,var(--cc) 78%,var(--bg));color:#12150F}
+.cell.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 78%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 78%,var(--bg)) 50% 100%)}
+.cell.past.trip{background:color-mix(in srgb,var(--cc) 30%,var(--bg));color:var(--mute)}
+.cell.past.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 30%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 30%,var(--bg)) 50% 100%)}
+.cnum{position:absolute;top:5px;right:7px;font-family:var(--mn);font-size:14px;line-height:1;opacity:.8}
+.cell.trip .cnum{opacity:.9}
 .cell:nth-child(7n){border-right:0}
-.cell.trip{color:var(--fg)}
+
 .cell.out{color:color-mix(in srgb,var(--mute) 42%,var(--bg))}
-.cell.past{color:color-mix(in srgb,var(--mute) 78%,var(--bg))}
-.cell.past .flag{opacity:.3}
-.cell .flag{width:13px;height:8px}
-.cell.out .flag{visibility:hidden}
-.cell.sel{background:var(--fg);color:var(--bg);font-weight:700}
-.cell.past.sel{background:var(--mute);color:var(--bg)}
-.cell.past.sel .flag{opacity:1}
-.cell.dot::after{content:"";position:absolute;width:4px;height:4px;background:currentColor;border-radius:50%;top:4px;right:5px}
-.cell.now{box-shadow:inset 0 0 0 2px var(--fg)}
+.cell.out .ctmp{display:none}
+
+
+
+.cell.sel{box-shadow:inset 0 0 0 3px var(--fg)}
+
+
+.cell.dot::after{content:"";position:absolute;width:4px;height:4px;background:currentColor;border-radius:50%;top:7px;left:7px;opacity:.85}
+.cell.now::before{content:"";position:absolute;left:7px;bottom:6px;width:5px;height:5px;border-radius:50%;background:currentColor}
 .tabs{display:flex;border:1.5px solid var(--edge);border-top:0}
 .tabs button{flex:1 1 0;padding:15px;text-align:center;font-family:var(--mn);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);border-right:1.5px solid var(--edge)}
 .tabs button:last-child{border-right:0}
@@ -111,7 +121,7 @@ input[type=time]{min-height:42px}
 .chips button{display:flex;align-items:center;gap:6px;font-family:var(--mn);font-size:13px;text-transform:uppercase;letter-spacing:.06em;border:1.5px solid var(--edge);padding:6px 8px;color:var(--mute)}
 .chips button.on{background:var(--fg);color:var(--bg)}
 .chips .flag{width:15px;height:9px}
-.legend{display:flex;flex-wrap:wrap;gap:8px 14px;padding:13px var(--pad);border-top:1px solid var(--edge)}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 16px;padding:14px var(--pad);border-top:1px solid var(--edge)}
 .legend span{display:flex;align-items:center;gap:5px;font-family:var(--mn);font-size:12.5px;color:var(--mute)}
 .legend i{width:13px;height:8px;display:block}
 
@@ -140,14 +150,15 @@ input[type=time]{min-height:42px}
 .hd .rule{flex:1 1 auto;height:1.5px;background:var(--edge)}
 .hd .n{font-family:var(--mn);font-size:12.5px;color:var(--mute);white-space:nowrap}
 
-.leg{display:flex;align-items:flex-end;gap:8px;margin-top:11px}
+.leg{display:flex;align-items:flex-start;gap:8px;margin-top:12px}
 .leg b{display:block;font-size:31px;font-weight:800;font-stretch:122%;line-height:.85;letter-spacing:-.04em}
 .leg a{text-decoration:none;display:block}
 .leg a b{color:var(--ac)}
 .leg .t{display:block;font-family:var(--mn);font-size:14px;font-weight:700;margin-top:5px}
 .leg em{display:block;font-style:normal;font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:2px;text-transform:uppercase}
-.leg .to{text-align:right;margin-left:auto}
-.leg .mid{flex:1 1 auto;padding-bottom:6px;text-align:center;min-width:60px}
+.leg .to{text-align:right}
+.leg .end{flex:1 1 0;min-width:0}
+.leg .mid{flex:1.5 1 0;min-width:0;padding-top:2px;padding-bottom:0;text-align:center}
 .leg .mid .air{display:block;font-family:var(--mn);font-size:12.5px;color:var(--fg);margin-bottom:5px;line-height:1.3}
 .leg .mid i{display:block;height:1.5px;background:var(--edge)}
 .leg .mid .dur{display:block;font-family:var(--mn);font-size:13px;color:var(--mute);margin-top:5px;line-height:1.3}
@@ -215,13 +226,6 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .wxline b{color:var(--fg);font-weight:700}
 .wxline.tap{color:var(--fg)}
 .wxline .chev{font-style:normal;margin-left:auto;color:var(--mute);font-size:17px;line-height:1}
-.wxbar{display:flex;align-items:center;justify-content:space-between;width:100%;padding-bottom:2px}
-.wxbar .x{font-family:var(--mn);font-size:13px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
-.wxin .strip{display:flex;align-items:flex-end;gap:3px;height:52px;margin-top:12px;position:relative}
-.thresh{position:absolute;left:0;right:0;height:1px;border-top:1px dashed var(--mute);opacity:.7}
-.wxin .strip i{flex:1 1 0;background:var(--mute);opacity:.32;display:block}
-.wxin .strip i.hi{opacity:1;background:var(--p2)}
-.wxin .hrs{display:flex;justify-content:space-between;font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:4px}
 .picker .locbar{border:1.5px solid var(--mute);border-top:1.5px solid var(--mute);margin:0}
 .locbar{display:flex;align-items:center;justify-content:center;width:100%;border:1.5px solid var(--edge);border-top:0;padding:14px var(--pad);font-family:var(--mn);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .locbar.on{color:var(--p2);border-color:var(--p2)}
@@ -246,7 +250,9 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .paste textarea{padding:13px;font-family:var(--mn);font-size:15px;background:var(--wash);color:var(--fg);border:1.5px solid var(--edge);padding:10px;width:100%;min-height:74px;resize:vertical;border-radius:0}
 .paste .hint{font-family:var(--mn);font-size:13px;color:var(--mute);line-height:1.5}
 .plans .add{width:24px;height:24px;flex:0 0 auto;border:1.5px solid var(--p2);border-radius:50%;color:var(--p2);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;padding-bottom:2px}
-.plan{padding:15px 0;border-bottom:1px solid var(--edge)}
+.plan{padding:15px 0;border-bottom:1px solid var(--edge);position:relative;background:var(--bg);touch-action:pan-y}
+.plan::after{content:"Delete";position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;font-family:var(--mn);font-size:12.5px;color:#FF6B60;letter-spacing:.1em;text-transform:uppercase;transform:translateX(100%);padding-left:14px}
+.plan.s2::after{font-weight:700}
 .plan:last-of-type{border-bottom:0}
 .ptop{display:flex;align-items:baseline;gap:10px}
 .ptop b{flex:1 1 auto;font-size:19px;font-weight:800;font-stretch:118%;text-transform:uppercase;letter-spacing:-.025em;line-height:1.1}
@@ -257,9 +263,9 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .prow{display:flex;align-items:center;gap:7px;margin-top:11px;flex-wrap:wrap}
 .tbox{font-family:var(--mn);font-size:14px;font-weight:700;border:1.5px solid var(--fg);padding:7px 10px;white-space:nowrap}
 .tbox.tbd{border-color:var(--mute);color:var(--mute);font-weight:400}
-.lks{display:flex;gap:7px}
-.lk{display:inline-flex;align-items:center;gap:6px;font-family:var(--mn);font-size:13px;text-decoration:none;border:1.5px solid var(--mute);padding:7px 10px;color:var(--fg)}
-.lk svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin:0}
+.lks{display:flex;gap:8px}
+.lk{display:inline-flex;align-items:center;justify-content:center;width:42px;height:38px;text-decoration:none;border:1.5px solid var(--mute);color:var(--fg)}
+.lk svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin:0}
 .empty{font-family:var(--mn);font-size:13px;color:var(--mute);padding:14px 0 4px}
 
 .picker{margin-top:14px;padding-top:13px;border-top:1.5px solid var(--edge);display:flex;flex-direction:column;gap:10px}
@@ -293,6 +299,93 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
   #screen{animation:snap .16s ease}
   @keyframes snap{from{opacity:0;transform:translateY(4px)}}
 }
+
+.wxrow2{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 0 2px}
+.wxin .unit{flex:0 0 auto;font-family:var(--mn);font-size:12.5px;border:1.5px solid var(--edge);padding:6px 8px}
+.tlo,.thi{font-size:22px;font-weight:800;font-stretch:122%;letter-spacing:-.04em;line-height:1;flex:0 0 auto}
+.tlo{color:var(--mute)}
+.tbar{flex:0 0 104px;position:relative;height:5px;background:color-mix(in srgb,var(--mute) 28%,transparent);border-radius:3px;overflow:hidden}
+.tbar i{position:absolute;top:0;bottom:0;border-radius:2px;background:linear-gradient(90deg,#4FA3D1,#E8C64A,#E2703A)}
+.wxin .pill{flex:0 0 auto;font-family:var(--mn);font-size:12.5px;border:1.5px solid var(--mute);padding:6px 8px;white-space:nowrap}
+.wxin .pill.drop{display:flex;align-items:center;justify-content:center;padding:6px;color:var(--mute)}
+.wxsub{font-family:var(--mn);font-size:12.5px;color:var(--mute);margin-top:7px}
+.picker{gap:12px}
+.picker .opts{border-top:1.5px solid var(--edge);padding-top:2px}
+.picker .cancel{width:100%;padding:14px;text-align:center;font-family:var(--mn);font-size:12.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;border:1.5px solid var(--edge)}
+
+.pnl>.ph .sortbtn{flex:0 0 auto;height:var(--lead);min-width:44px;border:1.5px solid var(--mute);color:var(--mute);font-family:var(--mn);font-size:12.5px;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;padding:0 7px}
+.pnl>.ph .sortbtn:hover{border-color:var(--fg);color:var(--fg)}
+
+.cats{display:flex;flex-direction:column}
+.cat{display:flex;align-items:center;gap:12px;width:100%;padding:17px 0;border-bottom:1px solid var(--edge);text-align:left}
+.cat:last-child{border-bottom:0}
+.cat b{flex:1 1 auto;font-size:19px;font-weight:800;font-stretch:118%;text-transform:uppercase;letter-spacing:-.025em}
+.cat span{font-family:var(--mn);font-size:13px;color:var(--mute)}
+.cat::after{content:"\203A";font-family:var(--mn);font-size:19px;color:var(--mute);line-height:1}
+.backrow{width:100%;font-family:var(--mn);font-size:12.5px;color:var(--p2);letter-spacing:.08em;text-transform:uppercase;padding:4px 0 12px;text-align:left}
+
+
+.ctrl{display:flex;align-items:center;gap:9px;padding-bottom:13px;border-bottom:1px solid var(--edge)}
+.seg{display:flex;flex:1 1 auto;border:1.5px solid var(--mute)}
+.seg button{flex:1 1 0;padding:10px 4px;text-align:center;font-family:var(--mn);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);border-right:1.5px solid var(--mute)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--fg);color:var(--bg)}
+.ctrl .locbtn{flex:0 0 auto;width:40px;height:40px;border:1.5px solid var(--mute);border-radius:50%;color:var(--mute);display:flex;align-items:center;justify-content:center;padding:0}
+.ctrl .locbtn.on{border-color:var(--p2);color:var(--p2)}
+.ctrl .locbtn svg{margin:0;width:17px;height:17px}
+
+
+.wnote{flex:0 0 auto;font-style:normal;font-family:var(--mn);font-size:12.5px;color:var(--mute);white-space:nowrap;max-width:38%;overflow:hidden;text-overflow:ellipsis}
+.wxrow2.on .wnote{color:var(--fg)}
+
+.cat.near b{color:var(--p1)}
+.cat.near svg{margin-right:8px}
+.seg button svg{margin-right:6px}
+
+
+.cathead{display:flex;align-items:center;gap:12px;padding:2px 0 12px;border-bottom:1.5px solid var(--edge);margin-bottom:12px}
+.cathead .cback{flex:0 0 auto;width:38px;height:38px;border:1.5px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.cathead b{flex:1 1 auto;font-size:19px;font-weight:800;font-stretch:118%;text-transform:uppercase;letter-spacing:-.025em}
+.cathead span{font-family:var(--mn);font-size:13px;color:var(--mute)}
+
+.goq{flex:0 0 auto;width:38px;height:38px;border:1.5px solid var(--mute);color:var(--mute);display:flex;align-items:center;justify-content:center;padding:0}
+.goq svg{margin:0}
+.optwrap{position:relative}
+.optwrap .opt{padding-right:48px}
+.opt-go{position:absolute;right:0;top:13px}
+.trav{display:flex;gap:7px;margin:2px 0 12px}
+.trav a{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mn);font-size:12.5px;text-decoration:none;border:1.5px solid var(--mute);padding:9px 6px;color:var(--fg);white-space:nowrap}
+.trav svg{margin:0;width:14px;height:14px}
+
+.ctmp{font-style:normal;font-family:var(--dp);font-weight:800;font-stretch:108%;font-size:16px;line-height:1;letter-spacing:-.03em;color:inherit}
+
+.segs{margin-top:14px;padding-top:12px;border-top:1px solid var(--edge)}
+.seg{display:flex;align-items:baseline;gap:10px;font-family:var(--mn);font-size:12.5px;padding:3px 0}
+.seg .sn{flex:0 0 62px;color:var(--fg)}
+.seg .sr{flex:1 1 auto;color:var(--mute)}
+.seg .sd{flex:0 0 auto;color:var(--fg)}
+.lay{font-family:var(--mn);font-size:12.5px;color:var(--p2);padding:7px 0 7px 72px;position:relative}
+.lay::before{content:"";position:absolute;left:62px;top:0;bottom:0;width:1px;background:var(--mute)}
+
+.perf{border-top:1.5px dashed var(--mute);margin:15px -12px 0;opacity:.8}
+.stubs{display:flex;gap:10px;padding-top:12px}
+.stub{flex:1 1 0;min-width:0}
+.stub em{display:block;font-style:normal;font-family:var(--mn);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.stub b{display:block;font-family:var(--mn);font-size:13.5px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.ptop .edit.rm{width:38px;padding:6px 0;text-align:center;font-size:16px;color:#FF6B60;border-color:#FF6B60}
+
+.leg .mid .air{display:block;font-family:var(--mn);font-size:12.5px;color:var(--fg);margin-bottom:7px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.pgh{display:flex;align-items:center;gap:10px;width:100%;padding:15px 0;border-top:1px solid var(--edge);text-align:left}
+.pgh:first-child{border-top:0}
+.pgh .l{flex:1 1 auto;font-family:var(--mn);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--p2)}
+.pgh .n{font-family:var(--mn);font-size:12.5px;color:var(--mute)}
+.pgh .tw{flex:0 0 auto;width:28px;height:28px;border:1.5px solid var(--p2);color:var(--p2);display:flex;align-items:center;justify-content:center;font-family:var(--mn);font-size:14px;line-height:1;padding-bottom:2px}
+
+.spot{position:relative;background:var(--bg);touch-action:pan-y}
+.spot::after{content:"Hide";position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;font-family:var(--mn);font-size:12.5px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;transform:translateX(100%);padding-left:14px}
+.spot.s2::after{content:"Remove";color:#FF6B60;font-weight:700}
 </style>
 </head>
 <body>
@@ -371,13 +464,21 @@ const esc=(s)=>String(s).replace(/[&<>"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&g
 const nights=(a,b)=>Math.round((d(b)-d(a))/864e5);
 
 const CARICON=`<svg class="mini" viewBox="0 0 24 24" style="margin-right:5px"><path d="M4 15v-3l2-5h12l2 5v3"/><path d="M3 15h18v3H3z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></svg>`;
+const SUN=`<svg viewBox="0 0 24 24" class="wi"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M5.2 18.8l1.9-1.9M16.9 7.1l1.9-1.9"/></svg>`;
+const CLOUD=`<svg viewBox="0 0 24 24" class="wi"><path d="M7.5 18h9.7a3.8 3.8 0 0 0 .3-7.6 5.6 5.6 0 0 0-10.8-1A4.3 4.3 0 0 0 7.5 18Z"/></svg>`;
+const RAINY=`<svg viewBox="0 0 24 24" class="wi"><path d="M7.5 14h9.7a3.8 3.8 0 0 0 .3-7.6 5.6 5.6 0 0 0-10.8-1A4.3 4.3 0 0 0 7.5 14Z"/><path d="M9 17.5l-1 3M13 17.5l-1 3M17 17.5l-1 3"/></svg>`;
+const DROP=`<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3s6 6.6 6 10a6 6 0 0 1-12 0c0-3.4 6-10 6-10Z"/></svg>`;
 const MOON=`<svg class="mini" viewBox="0 0 24 24" style="margin-right:5px"><path d="M20.5 14.8A8.6 8.6 0 0 1 9.2 3.5a8.6 8.6 0 1 0 11.3 11.3Z"/></svg>`;
+const HOME=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1Z"/></svg>`;
+const THERM=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/></svg>`;
 const CLOCK=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
-const SWAP=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 8h15l-3.5-3.5M20 16H5l3.5 3.5"/></svg>`;
 const EYE=`<svg class="mini" viewBox="0 0 24 24" style="margin:0"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>`;
 const EYEOFF=`<svg class="mini" viewBox="0 0 24 24" style="margin:0"><path d="M4 4l16 16"/><path d="M9.5 9.6A2.6 2.6 0 0 0 12 14.6"/><path d="M6.6 6.8C3.9 8.4 2 12 2 12s3.6 6 10 6c1.7 0 3.2-.4 4.5-1"/><path d="M19.5 15.2C21.2 13.8 22 12 22 12s-3.6-6-10-6c-.9 0-1.7.1-2.5.3"/></svg>`;
 const WALK=`<svg class="mini" viewBox="0 0 24 24"><circle cx="13" cy="4" r="1.6"/><path d="M11 21l2-6-3-3 1-5 3 3 3 1"/><path d="M10 12l-2 4"/><path d="M13 15l3 2 1 4"/></svg>`;
+const CLOCK2=`<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>`;
+const NEAR=`<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px"><path d="M21 3 14 21l-2.5-7.5L4 11Z"/></svg>`;
 const LOC=`<svg class="mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>`;
+const GLOBE=`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg>`;
 const PIN=`<svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>`;
 const TEL=`<svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>`;
 const SEAT=`<svg class="mini" viewBox="0 0 24 24"><path d="M7 4v9a3 3 0 0 0 3 3h7"/><path d="M17 16v4"/><path d="M4 20h13"/><path d="M7 8h4"/></svg>`;
@@ -402,7 +503,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let ME=null,pick=null,pasteText="",calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},wxView=null,units="C",FX=null,fxOpen=false;
+let ME=null,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false;
 let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const loadPlans=()=>{
@@ -524,14 +625,15 @@ function start(trip){
   PORT={}; CITY={};
   trip.stays.forEach((s)=>{if(s.arrCode){PORT[s.arrCode]=s.pop1;CITY[s.arrCode]={name:s.city,flag:s.flag}}});
   if(trip.meta.home&&trip.meta.home.code){PORT[trip.meta.home.code]=trip.meta.home.pop;CITY[trip.meta.home.code]={name:trip.meta.home.city,flag:trip.meta.home.flag}}
+  Object.entries(trip.meta.hubs||{}).forEach(([c,h])=>{PORT[c]=h.pop;CITY[c]={name:h.name,flag:"xx"}});
   if($("#lock"))$("#lock").style.display="none";
   $("#app").classList.add("on");
   const today=iso(new Date());
   const i=DAYS.findIndex((x)=>x.date===today);
   cur=i>=0?i:(today>TRIP.meta.end?DAYS.length-1:0);
   $("#app").innerHTML=`
-    <div class="mast"><b>Europe 2026</b>
-      <span class="grp"><button id="clk" aria-label="Time format">${CLOCK}</button><button id="fx" aria-label="Currency">${SWAP}</button><button id="invert" aria-label="Invert colours"></button></span></div>
+    <div class="mast"><b id="mastcity">Europe 2026</b>
+      <span class="grp"><a id="home" aria-label="Hotel">${HOME}</a><button id="clk" aria-label="Time format">${CLOCK}</button><button id="units" aria-label="Temperature units">${units==="C"?"\u00B0C":"\u00B0F"}</button><button id="fx" aria-label="Currency">&euro;</button><button id="invert" aria-label="Invert colours"></button></span></div>
     <div id="fxbox"></div>
     <div id="screen"></div>
     <div class="foot"><span id="sync">…</span><span class="fbtns"><button id="clearplans">CLEAR PLANS</button><button id="forget">LOCK THIS DEVICE</button></span></div>`;
@@ -557,6 +659,12 @@ function start(trip){
     clock12=!clock12;
     try{localStorage.setItem("eu26.clock",clock12?"12":"24")}catch{}
     $("#clk").classList.toggle("on",clock12);
+    draw();
+  });
+  $("#units").addEventListener("click",()=>{
+    units=units==="C"?"F":"C";
+    try{localStorage.setItem(WKEY,units)}catch{}
+    $("#units").textContent=units==="C"?"\u00B0C":"\u00B0F";
     draw();
   });
   $("#fx").addEventListener("click",()=>{
@@ -590,29 +698,62 @@ function countdown(){
 
 function go(i){
   if(i<0||i>=DAYS.length)return;
-  cur=i; editing=null; view="day"; calTab="cal"; pickCity=null; wxView=null; openPanel=undefined; pasting=null;
+  cur=i; editing=null; view="day"; calTab="cal"; pickCity=null; openPanel=undefined; pasting=null;
   history.replaceState(null,"","#d="+DAYS[cur].date);
   draw(); if(fxOpen)drawFx();
 }
 function draw(){ view==="cal"?(calTab==="places"?drawPlaces():drawCal()):drawDay(); }
 
+async function loadCalWx(){
+  if(wxdLoaded) return; wxdLoaded=true;
+  const groups={};
+  DAYS.forEach((x)=>{
+    const g=geoFor(x); if(!g)return;
+    const k=g.lat+","+g.lng;
+    if(!groups[k]) groups[k]={lat:g.lat,lng:g.lng,from:x.date,to:x.date};
+    if(x.date<groups[k].from)groups[k].from=x.date;
+    if(x.date>groups[k].to)groups[k].to=x.date;
+  });
+  await Promise.all(Object.values(groups).map(async(g)=>{
+    try{
+      const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lng}`
+        +`&daily=temperature_2m_max&timezone=auto&start_date=${g.from}&end_date=${g.to}`);
+      if(!r.ok)return;
+      const j=await r.json();
+      (j.daily.time||[]).forEach((t,i)=>{
+        const v=j.daily.temperature_2m_max[i];
+        if(v!=null) WXD[t]=v;
+      });
+    }catch{}
+  }));
+  if(view==="cal"&&calTab==="cal") drawCal();
+}
+
 function drawCal(){
+  loadCalWx();
   const first=d(TRIP.meta.start),y=first.getFullYear(),m=first.getMonth();
   const lead=new Date(y,m,1).getDay(),len=new Date(y,m+1,0).getDate(),today=iso(new Date());
   let cells="";
-  for(let i=0;i<lead;i++) cells+=`<div class="cell out"><span></span><span class="flag"></span></div>`;
+  for(let i=0;i<lead;i++) cells+=`<div class="cell out"><span class="cnum"></span><em class="ctmp"></em></div>`;
   for(let n=1;n<=len;n++){
     const date=iso(new Date(y,m,n)),day=DAYS.find((x)=>x.date===date),cls=["cell"];
     if(day){cls.push("trip"); if(date<today)cls.push("past"); if((PLANS[date]||[]).length)cls.push("dot");} else cls.push("out");
     if(day&&DAYS[cur].date===date)cls.push("sel");
     if(date===today)cls.push("now");
-    cells+=`<button class="${cls.join(" ")}" ${day?`data-go="${DAYS.indexOf(day)}"`:"disabled"} aria-label="${esc(date)}"><span>${n}</span><span class="flag ${day?day.flag:""}"></span></button>`;
+    const tmp=day&&WXD[date]!=null?tC(WXD[date]):"";
+    let c1=day?day.p1:null,c2=c1;
+    if(day&&day.flights.length){
+      c1=PORT[day.flights[0].from.code]||day.p1;
+      c2=PORT[day.flights[day.flights.length-1].to.code]||day.p1;
+    }
+    const bg=day?`--cc:${c1};--cc2:${c2}`:"";
+    cells+=`<button class="${cls.join(" ")}${day&&day.flights.length&&c1!==c2?" split":""}" style="${bg}" ${day?`data-go="${DAYS.indexOf(day)}"`:"disabled"} aria-label="${esc(date)}"><span class="cnum">${n}</span><em class="ctmp">${tmp}</em></button>`;
   }
   const seen=[]; TRIP.stays.forEach((s)=>{if(!seen.some((x)=>x.city===s.city))seen.push(s)});
   $("#screen").innerHTML=`<div class="cal">
     <div class="cal-head"><b>${MONTH[m]} ${y}</b><span>TAP A DAY</span></div>
     <div class="grid">${DOW.map((x)=>`<div class="dow">${x[0]}</div>`).join("")}${cells}</div>
-    <div class="legend">${seen.map((s)=>`<span><i class="flag ${s.flag}"></i>${esc(s.city)}</span>`).join("")}</div>
+    <div class="legend">${seen.map((s)=>`<span><i style="background:${s.pop1}"></i>${esc(s.city)}</span>`).join("")}<span><i style="background:#8A8878"></i>Travel</span><span><i class="ldot"></i>Plans</span></div>
   </div>
   ${tabs()}`;
   $("#screen").querySelectorAll("[data-go]").forEach((b)=>b.addEventListener("click",()=>go(+b.dataset.go)));
@@ -655,6 +796,7 @@ function wireSpotActions(redraw){
 
 const WKEY="eu26.units";
 try{units=localStorage.getItem(WKEY)||"C"}catch{}
+try{sortMode=localStorage.getItem("eu26.sort")||"123"}catch{}
 let clock12=false;
 try{clock12=localStorage.getItem("eu26.clock")==="12"}catch{}
 function T(t){
@@ -671,18 +813,23 @@ const tC=(c)=>units==="C"?Math.round(c)+"\u00B0":Math.round(c*9/5+32)+"\u00B0";
 function geoFor(x){
   const s=x.arriving[0]||x.stay;
   if(s&&s.lat!=null) return {lat:s.lat,lng:s.lng,city:s.city};
-  const h=TRIP.meta.home;
-  return {lat:h.lat,lng:h.lng,city:h.city};
+  const i=DAYS.indexOf(x);
+  for(let j=i+1;j<DAYS.length;j++){
+    const n=DAYS[j].arriving[0]||DAYS[j].stay;
+    if(n&&n.lat!=null) return {lat:n.lat,lng:n.lng,city:n.city};
+  }
+  return null;
 }
 
 async function getWx(x){
-  const g=geoFor(x), key=g.city+"|"+x.date;
+  const g=geoFor(x); if(!g)return;
+  const key=g.city+"|"+x.date;
   if(WX[key]!==undefined) return;
   WX[key]=null;
   try{
     const u=`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lng}`
-      +`&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max`
-      +`&hourly=temperature_2m,precipitation_probability,uv_index&timezone=auto`
+      +`&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code`
+      +`&daily=weather_code&hourly=temperature_2m,precipitation_probability,uv_index&timezone=auto`
       +`&start_date=${x.date}&end_date=${x.date}`;
     const r=await fetch(u);
     if(!r.ok)throw 0;
@@ -700,6 +847,7 @@ async function getWx(x){
       hi,lo,
       hiAt:near(hi),loAt:near(lo),
       pop:j.daily.precipitation_probability_max[0]||0,
+      code:(j.daily.weather_code||[])[0],
       uvMax:Math.max(0,...hrs.map((z)=>z.uv||0)),
       uvFrom:over.length?over[0].h:null, uvTo:over.length?over[over.length-1].h:null,
       hrs
@@ -708,50 +856,45 @@ async function getWx(x){
   drawDay();
 }
 
-function bars(hrs,pick,max,hot){
-  const win=hrs.filter((z)=>+z.h.slice(0,2)>=6&&+z.h.slice(0,2)<=21);
-  if(!win.length) return "";
-  const line=Math.round(hot/max*100);
-  const marks=[0,Math.floor((win.length-1)/3),Math.floor(2*(win.length-1)/3),win.length-1]
-    .filter((v,i,a)=>a.indexOf(v)===i).map((i)=>win[i].h);
-  return `<div class="strip"><span class="thresh" style="bottom:${line}%"></span>${win.map((z)=>{
-      const v=pick(z)||0, pc=Math.max(3,Math.round(v/max*100));
-      return `<i class="${v>hot?"hi":""}" style="height:${pc}%"></i>`;
-    }).join("")}</div>
-    <div class="hrs">${marks.map((h)=>`<span>${esc(T(h))}</span>`).join("")}</div>`;
+
+function wxSummary(x){
+  const g=geoFor(x); if(!g) return "";
+  const w=WX[g.city+"|"+x.date];
+  if(w===undefined||w===false||w==null) return "";
+  const c=condIcon(w.code).t;
+  return w.pop>=25?`${c}, ${w.pop}%`:c;
+}
+
+function condIcon(c){
+  if(c==null) return {i:SUN,t:"Clear"};
+  if(c===0) return {i:SUN,t:"Clear"};
+  if(c<=3) return {i:CLOUD,t:c===1?"Mostly clear":c===2?"Partly cloudy":"Cloudy"};
+  if(c<=48) return {i:CLOUD,t:"Fog"};
+  if(c<=67||(c>=80&&c<=82)) return {i:RAINY,t:"Rain"};
+  if(c<=77) return {i:CLOUD,t:"Snow"};
+  return {i:RAINY,t:"Storms"};
 }
 
 
+
 function weatherBox(x){
-  const g=geoFor(x), w=WX[g.city+"|"+x.date];
+  const g=geoFor(x); if(!g) return "";
+  const w=WX[g.city+"|"+x.date];
   if(w===undefined){ getWx(x); return `<p class="wxload">Loading weather</p>`; }
   if(w===false||w==null) return `<p class="wxload">Forecast opens up about two weeks out</p>`;
 
-  if(wxView==="uv"){
-    return `<div class="wxin">
-      <button class="wxbar" data-wx=""><span class="lbl">UV index</span><span class="x">&larr; back</span></button>
-      ${bars(w.hrs,(z)=>z.uv,Math.max(3,w.uvMax),2)}
-      <p class="wxline">${w.uvFrom?`Wear sunscreen from <b>${T(w.uvFrom)}</b> to <b>${T(w.uvTo)}</b>`:"UV stays under 2 all day"} &middot; peak ${w.uvMax.toFixed(1)}</p>
-    </div>`;
-  }
-  if(wxView==="pop"){
-    return `<div class="wxin">
-      <button class="wxbar" data-wx=""><span class="lbl">Rain chance</span><span class="x">&larr; back</span></button>
-      ${bars(w.hrs,(z)=>z.pop,100,50)}
-      <p class="wxline">Peak <b>${w.pop}%</b> chance today</p>
-    </div>`;
-  }
 
+  const SC=units==="C"?{min:0,max:42}:{min:32,max:108};
+  const val=(c)=>units==="C"?c:c*9/5+32;
+  const pos=(c)=>Math.max(0,Math.min(100,(val(c)-SC.min)/(SC.max-SC.min)*100));
+  const L=pos(w.lo), R=pos(w.hi);
+  const cond=condIcon(w.code);
   return `<div class="wxin">
-    <div class="wxtop">
-      <span class="tcol"><b>${tC(w.hi)}</b><em>High ${esc(T(w.hiAt||""))}</em></span>
-      <span class="tcol lo"><b>${tC(w.lo)}</b><em>Low ${esc(T(w.loAt||""))}</em></span>
-      <span class="wxbtns">
-        <button class="unit" id="wx-units">${units==="C"?"\u00B0C":"\u00B0F"}</button>
-        <button class="pill" data-wx="pop">${w.pop}% rain</button>
-      </span>
+    <div class="wxrow2">
+      <span class="tlo">${tC(w.lo)}</span>
+      <span class="tbar"><i style="left:${pos(w.lo)}%;width:${Math.max(4,pos(w.hi)-pos(w.lo))}%;background:linear-gradient(90deg,#4FA3D1,#E8C64A,#E2703A)"></i></span>
+      <span class="thi">${tC(w.hi)}</span>
     </div>
-    <button class="wxline tap" data-wx="uv">${w.uvFrom?`Wear sunscreen <b>${T(w.uvFrom)}</b> to <b>${T(w.uvTo)}</b>`:"No sunscreen needed today"}<i class="chev">&rsaquo;</i></button>
   </div>`;
 }
 
@@ -846,7 +989,7 @@ function cityList(){
 }
 
 function placeRow(sp,i,city,date,hidden){
-  return `<div class="spot${hidden?" gone":""}">
+  return `<div class="spot${hidden?" gone":""}" data-swipespot="${esc(city)}|${i}">
     <div class="sinfo">
       <b>${esc(sp.name)}</b>
       <span>${metaLine(sp,date)}</span>
@@ -871,7 +1014,13 @@ function drawPlaces(){
     const adding=pasting===id;
     const parsed=adding?parseSpot(pasteText):{sec:null};
     const inner=`
-      ${live.length?live.map((o)=>placeRow(o.sp,o.i,c.city,x.date)).join(""):`<p class="empty">Nothing saved yet.</p>`}
+      ${live.length?SECTIONS.map((sec)=>{
+        const items=sortList(live.filter(({sp})=>sp.sec===sec),(o)=>o.sp);
+        if(!items.length) return "";
+        const k=c.city+"|"+sec, open=openSec.has(k);
+        return `<button class="pgh" data-pgh="${esc(k)}"><span class="l">${esc(sec)}</span><span class="n">${items.length}</span><span class="tw">${open?"&minus;":"+"}</span></button>
+          ${open?items.map((o)=>placeRow(o.sp,o.i,c.city,x.date)).join(""):""}`;
+      }).join(""):`<p class="empty">Nothing saved yet.</p>`}
       ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
         ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
       ${adding?`<div class="picker">
@@ -891,6 +1040,11 @@ function drawPlaces(){
 
   wireTabs();
   if($("#loc")) $("#loc").addEventListener("click",askLoc);
+  $("#screen").querySelectorAll("[data-sort]").forEach((b)=>b.addEventListener("click",()=>{
+    sortMode=b.dataset.sort;
+    try{localStorage.setItem("eu26.sort",sortMode)}catch{}
+    if(sortMode==="KM"&&!ME) askLoc(); else draw();
+  }));
   $("#screen").querySelectorAll("[data-pnl]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.pnl;
     openPanel=openPanel===k?null:k;
@@ -900,10 +1054,14 @@ function drawPlaces(){
   $("#screen").querySelectorAll("[data-seen]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.seen; seenOpen.has(k)?seenOpen.delete(k):seenOpen.add(k); draw();
   }));
+  $("#screen").querySelectorAll("[data-pgh]").forEach((b)=>b.addEventListener("click",()=>{
+    const k=b.dataset.pgh; openSec.has(k)?openSec.delete(k):openSec.add(k); draw();
+  }));
   $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{
     pasting=b.dataset.add; pasteText=""; pick={sec:null}; openPanel=b.dataset.add; draw();
   }));
   wireSpotActions(()=>draw());
+  wireSwipe(DAYS[cur]);
   if(pasting&&pasting.indexOf("city:")===0){
     const city=pasting.slice(5);
     const inp=$("#s-paste");
@@ -928,6 +1086,18 @@ function wireTabs(){
   $("#screen").querySelectorAll("[data-tab]").forEach((b)=>b.addEventListener("click",()=>{calTab=b.dataset.tab;pasting=null;draw()}));
 }
 
+function paintMast(x){
+  const c=$("#mastcity"); if(!c)return;
+  c.textContent=x.flights.length&&!x.stay&&!x.arriving.length?x.city:x.city;
+  c.style.setProperty("--mc",(x.arriving[0]||x.stay)?x.p1:"var(--fg)");
+  const s=x.arriving[0]||x.stay;
+  const h=$("#home");
+  if(s&&s.address){
+    h.href="https://maps.google.com/?q="+encodeURIComponent(s.name+", "+s.address);
+    h.target="_blank"; h.rel="noopener"; h.classList.remove("off");
+  }else{ h.removeAttribute("href"); h.classList.add("off"); }
+}
+
 function drawDay(){
   const x=DAYS[cur],t=d(x.date);
   let html="";
@@ -939,7 +1109,7 @@ function drawDay(){
     if(x.arriving.length) html+=placeCard(x);
   }else{
     (x.cars||[]).forEach((c,i)=>{html+=carCard(c,i)});
-    html+=placeCard(x);
+    if(x.arriving.length) html+=placeCard(x);
   }
   html+=plansBlock(x);
 
@@ -947,30 +1117,30 @@ function drawDay(){
     <div class="nav" style="--p1:${x.p1};--p2:${x.p2}">
       <div class="navrow">
         <button class="arw" id="prev" ${cur===0?"disabled":""} aria-label="Previous day">&larr;</button>
-        <button id="datebtn"><b>${DOW[t.getDay()]} ${t.getDate()} ${MON[t.getMonth()]}</b><span>${x.date<iso(new Date())?"DONE &middot; ":""}DAY ${cur+1} / ${DAYS.length} &middot; <u>CALENDAR</u></span></button>
+        <button id="datebtn"><b>${DOW[t.getDay()]} ${t.getDate()} ${MON[t.getMonth()]}</b><span>${x.date<iso(new Date())?"DONE &middot; ":""}DAY ${cur+1} / ${DAYS.length}${wxSummary(x)?" &middot; "+esc(wxSummary(x)):""}</span></button>
         <button class="arw" id="next" ${cur===DAYS.length-1?"disabled":""} aria-label="Next day">&rarr;</button>
       </div>
       <div class="wxrow">${weatherBox(x)}</div>
     </div>
     <div class="${x.date<iso(new Date())?"past-day":""}" style="--p1:${x.p1};--p2:${x.p2}">${html}</div>`;
 
+  paintMast(x);
   $("#prev").addEventListener("click",()=>go(cur-1));
   $("#next").addEventListener("click",()=>go(cur+1));
   $("#datebtn").addEventListener("click",()=>{view="cal";draw()});
-  $("#screen").querySelectorAll("[data-wx]").forEach((b)=>b.addEventListener("click",()=>{
-    wxView=b.dataset.wx||null; drawDay();
-  }));
-  if($("#wx-units")) $("#wx-units").addEventListener("click",()=>{
-    units=units==="C"?"F":"C"; try{localStorage.setItem(WKEY,units)}catch{} drawDay();
-  });
   $("#screen").querySelectorAll("[data-pnl]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.pnl;
     openPanel=openPanel===k?null:k;
     if(k!=="plans")editing=null;
     if(!k.startsWith("sec:"))pasting=null;
-    wxView=null; drawDay();
+    drawDay();
   }));
   if($("#loc")) $("#loc").addEventListener("click",askLoc);
+  $("#screen").querySelectorAll("[data-sort]").forEach((b)=>b.addEventListener("click",()=>{
+    sortMode=b.dataset.sort;
+    try{localStorage.setItem("eu26.sort",sortMode)}catch{}
+    if(sortMode==="KM"&&!ME) askLoc(); else draw();
+  }));
   wirePlans(x);
   $("#screen").querySelectorAll(".code[data-copy]").forEach((el)=>el.addEventListener("click",async()=>{
     try{
@@ -986,18 +1156,21 @@ function drawDay(){
 const port=(code)=>`<a href="https://maps.google.com/?q=${encodeURIComponent(code+" airport")}" target="_blank" rel="noopener" style="--ac:${PORT[code]||"var(--fg)"}"><b>${esc(code)}</b></a>`;
 
 function flightHero(f,idx){
-  const seats=f.seats&&f.seats.length
-    ? f.seats.map((s)=>`<span class="code info"><span class="l">${SEAT}${esc(s.who)}</span><span class="v">${esc(s.seat)}</span></span>`).join("")
-    : `<span class="code info"><span class="l">${SEAT}Seats</span><span class="v">TBD</span></span>`;
+  const seats="";
+  const stub=(lbl,val)=>`<span class="stub"><em>${esc(lbl)}</em><b>${val||"TBD"}</b></span>`;
   const body=`<div class="leg">
-      <div>${port(f.from.code)}<span class="t">${esc(T(f.from.time))}</span><em>${esc(f.from.terminal||f.from.city)}</em></div>
-      <div class="mid">
-        <span class="air">${esc(f.airline)}<br>${esc(f.number)}</span>
-        <i></i>
-        <span class="dur">${esc(f.duration)}${f.stop?"<br>"+esc(f.stop):""}</span>
-      </div>
-      <div class="to">${port(f.to.code)}<span class="t">${esc(T(f.to.time))}${f.to.arrivesNextDay?` <em class="plus" style="background:${PORT[f.to.code]||"var(--p2)"}">+1</em>`:""}</span><em>${esc(f.to.city)}</em></div>
+      <div class="end">${port(f.from.code)}<span class="t">${esc(T(f.from.time))}</span></div>
+      <div class="mid"><span class="air">${esc(f.airline)} ${esc(f.number)}</span><i></i><span class="dur">${esc(f.duration)}</span></div>
+      <div class="end to">${port(f.to.code)}<span class="t">${esc(T(f.to.time))}${f.to.arrivesNextDay?` <em class="plus" style="background:${PORT[f.to.code]||"var(--p2)"}">+1</em>`:""}</span></div>
     </div>
+    <div class="perf"></div>
+    <div class="stubs">
+      ${stub("Terminal",esc(f.from.terminal||"\u2013"))}
+      ${stub("Gate",f.from.gate?esc(f.from.gate):"")}
+      ${stub("Seats",(f.seats&&f.seats.length)?f.seats.map((z)=>esc(z.seat)).join(" \u00b7 "):"")}
+      ${stub("Arrives",esc(f.to.terminal||"\u2013"))}
+    </div>
+
     <div class="codes">${(f.codes||[]).map((c)=>`<button class="code" data-copy="${esc(c.value)}"><span class="l">${esc(c.label)}</span><span class="v">${esc(c.value)}</span></button>`).join("")}${seats}</div>
     ${notes(f.notes)}`;
   return panel("fl"+idx,"Flight",`${esc(f.from.code)} &rarr; ${esc(f.to.code)} &middot; ${esc(T(f.from.time))}`,body);
@@ -1043,15 +1216,15 @@ function carCard(c,i){
 function placeCard(x){
   const arriving=!!x.arriving.length;
   const s=x.arriving[0]||x.stay;
-  if(!s) return panel("place",esc(x.city),esc(x.country),`<p class="sub">Travelling</p>`,{flag:x.flag,city:1});
+  if(!s) return panel("place","Hotel",esc(x.country),`<p class="sub">Travelling</p>`,{city:1});
   const tot=nights(s.checkIn,s.checkOut),n=arriving?1:nights(s.checkIn,x.date)+1;
-  return panel("place",esc(s.city),`${MOON}${n} / ${tot}`,`${byeLine(x)}${stayBody(s,arriving)}`,{flag:s.flag,city:1});
+  return panel("place","Hotel",`${MOON}${n} / ${tot}`,`${byeLine(x)}${stayBody(s,arriving)}`,{city:1});
 }
 
 function hoursFor(sp,date){
   if(!sp.hours||!sp.hours.some(Boolean)) return "";
   const h=sp.hours[d(date).getDay()];
-  return h?Trange(h):"Closed today";
+  return h?(h==="Open 24h"?h:Trange(h)):"Closed today";
 }
 
 function closedDays(sp){
@@ -1079,11 +1252,23 @@ function metaLine(sp,date){
   return a.join(" &middot; ")+(b.length?`<em class="l2">${b.join(" &middot; ")}</em>`:"");
 }
 
+function travelRow(sp){
+  if(sp.lat==null||!ME) return "";
+  const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
+  const dir=(m)=>`https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}&travelmode=${m}`;
+  return `<div class="trav">
+    <a href="${dir("walking")}" target="_blank" rel="noopener">${WALK}${walkMin(k)} min</a>
+    <a href="${dir("transit")}" target="_blank" rel="noopener">${RAIL}Transit</a>
+    <a href="${dir("driving")}" target="_blank" rel="noopener">${CAR}${driveMin(k)} min</a>
+  </div>`;
+}
+
 function links(sp){
   const out=[];
-  if(sp.lat!=null) out.push(`<a class="lk" href="https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}" target="_blank" rel="noopener">${PIN}Map</a>`);
-  else if(sp.url) out.push(`<a class="lk" href="${esc(sp.url)}" target="_blank" rel="noopener">${PIN}Map</a>`);
-  if(sp.phone) out.push(`<a class="lk" href="tel:${esc(sp.phone)}">${TEL}Call</a>`);
+  const dest=sp.lat!=null?`https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}`:sp.url;
+  if(dest) out.push(`<a class="lk" href="${esc(dest)}" target="_blank" rel="noopener" aria-label="Map">${PIN}</a>`);
+  if(sp.web) out.push(`<a class="lk" href="${esc(sp.web)}" target="_blank" rel="noopener" aria-label="Website">${GLOBE}</a>`);
+  if(sp.phone) out.push(`<a class="lk" href="tel:${esc(sp.phone)}" aria-label="Call">${TEL}</a>`);
   return out.length?`<span class="lks">${out.join("")}</span>`:"";
 }
 
@@ -1102,13 +1287,15 @@ function planRow(p,i,date){
   const sub=[];
   if(p.what&&p.where) sub.push(esc(p.where));
   const m=metaLine(p,date); if(m) sub.push(m);
-  return `<div class="plan">
+  return `<div class="plan" data-swipe="${i}">
     <div class="ptop">
       <b>${esc(head)}</b>
       <button class="edit" data-editplan="${i}">Edit</button>
+      <button class="edit rm" data-delplan="${i}" aria-label="Delete">&times;</button>
     </div>
     ${sub.length?`<p class="pmeta">${sub.join(" &middot; ")}</p>`:""}
-    <div class="prow"><span class="tbox${p.time?"":" tbd"}">${t}</span>${links(p)}</div>
+    <div class="prow"><span class="tbox${p.time?"":" tbd"}">${t}</span>${links(p)}${(ME&&p.lat!=null)?`<button class="goq" data-trav="${i}">${NEAR}</button>`:""}</div>
+    ${travOpen===i?travelRow(p):""}
     ${p.note?`<p class="pnote">${esc(p.note)}</p>`:""}
     ${editing===i?planEditor(p,i):""}
   </div>`;
@@ -1122,33 +1309,55 @@ function picker(x){
   const isLink=!!parsed.url;
   const city=x.city;
   const done=plannedMap();
-  let all=(SPOTS[city]||[]).map((sp,i)=>({sp,i})).filter(({sp})=>!sp.done);
-  if(q) all=all.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
   const key=(sp)=>(sp.url||sp.name||"").toLowerCase();
-  if(ME) all.sort((a,b)=>{
-    const A=a.sp.lat!=null?km(ME.lat,ME.lng,a.sp.lat,a.sp.lng):1e9;
-    const B=b.sp.lat!=null?km(ME.lat,ME.lng,b.sp.lat,b.sp.lng):1e9;
-    return A-B;
-  });
-  const fresh=all.filter(({sp})=>!done[key(sp)]);
-  const used=all.filter(({sp})=>done[key(sp)]);
-  const exact=all.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
-  const row=(o,dim)=>`<button class="opt${dim?" dim":""}" data-pickspot="${o.i}">
-      <b>${esc(o.sp.name)}</b>
-      <span>${metaLine(o.sp,x.date)}${dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):""}</span>
-    </button>`;
+  const pool=(SPOTS[city]||[]).map((sp,i)=>({sp,i})).filter(({sp})=>!sp.done);
+
+  const row=(o,dim)=>`<div class="optwrap">
+      <button class="opt${dim?" dim":""}" data-pickspot="${o.i}">
+        <b>${esc(o.sp.name)}</b>
+        <span>${metaLine(o.sp,x.date)}${dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):""}</span>
+      </button>
+      ${(ME&&o.sp.lat!=null)?`<button class="goq opt-go" data-travspot="${o.i}">${NEAR}</button>`:""}
+      ${travOpen==="s"+o.i?travelRow(o.sp):""}
+    </div>`;
+
+  const listOf=(arr)=>{
+    const a=sortList(arr,(o)=>o.sp);
+    const fresh=a.filter(({sp})=>!done[key(sp)]);
+    const used=a.filter(({sp})=>done[key(sp)]);
+    return fresh.map((o)=>row(o)).join("")+used.map((o)=>row(o,true)).join("");
+  };
+
+  let body;
+  if(isLink){
+    body=`<div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick.sec||parsed.sec)===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+      <button class="save" id="pk-new">Add ${esc(parsed.name||"this place")}</button>`;
+  }else if(q){
+    const hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
+    const exact=pool.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
+    body=`${exact?"":`<button class="save" id="pk-new">Add &ldquo;${esc(q)}&rdquo;</button>`}
+      <div class="opts">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`;
+  }else if(pick.cat){
+    const items=pick.cat==="__near"
+      ? pool.filter(({sp})=>sp.lat!=null&&ME&&walkMin(km(ME.lat,ME.lng,sp.lat,sp.lng))<=15)
+      : pool.filter(({sp})=>sp.sec===pick.cat);
+    const ttl=pick.cat==="__near"?"Nearby":pick.cat;
+    body=`<div class="cathead"><button class="cback" id="pk-back">&larr;</button><b>${esc(ttl)}</b><span>${items.length}</span></div>
+      ${sortCtrl(false)}
+      <div class="opts">${items.length?listOf(items):`<p class="empty">${pick.cat==="__near"?(ME?"Nothing within a 15 minute walk.":"Turn on location to see what is close."):"Nothing here yet."}</p>`}</div>`;
+  }else{
+    const near=ME?pool.filter(({sp})=>sp.lat!=null&&walkMin(km(ME.lat,ME.lng,sp.lat,sp.lng))<=15).length:null;
+    body=`<div class="cats">
+      <button class="cat near" data-cat="__near"><b>${NEAR}Nearby</b><span>${near==null?"15 min walk":near}</span></button>
+      ${SECTIONS.map((sec)=>{
+        const n=pool.filter(({sp})=>sp.sec===sec).length;
+        return `<button class="cat" data-cat="${esc(sec)}"><b>${esc(sec)}</b><span>${n}</span></button>`;
+      }).join("")}</div>`;
+  }
+
   return `<div class="picker">
     <input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search, type a new one, or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
-    ${isLink?`<div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick.sec||parsed.sec)===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>`:""}
-    <div class="two">
-      <input id="pk-time" type="time" value="${esc(pick.time||"")}" autocomplete="off">
-      <span>to</span>
-      <input id="pk-end" type="time" value="${esc(pick.end||"")}" autocomplete="off">
-    </div>
-    ${isLink?`<button class="save" id="pk-new">Add ${esc(parsed.name||"this place")}</button>`
-      :(q&&!exact?`<button class="save" id="pk-new">Add &ldquo;${esc(q)}&rdquo;</button>`:"")}
-    <div class="opts">${fresh.map((o)=>row(o)).join("")}${used.map((o)=>row(o,true)).join("")}
-      ${!fresh.length&&!used.length?`<p class="empty">${q?"Nothing matches.":"No saved places for "+esc(city)+" yet."}</p>`:""}</div>
+    ${body}
     <button class="cancel" id="pk-cancel">Cancel</button>
   </div>`;
 }
@@ -1166,35 +1375,84 @@ function planEditor(p,i){
   </div>`;
 }
 
+const distOf=(o)=>(ME&&o.lat!=null)?km(ME.lat,ME.lng,o.lat,o.lng):Infinity;
+const nameOf=(o)=>(o.what||o.where||o.name||"").toLowerCase();
+
+function sortList(arr,getter){
+  const a=arr.slice();
+  if(sortMode==="ABC") a.sort((x,y)=>nameOf(getter(x)).localeCompare(nameOf(getter(y))));
+  else if(sortMode==="KM") a.sort((x,y)=>distOf(getter(x))-distOf(getter(y)));
+  return a;
+}
+
+function sortCtrl(withTime){
+  const opts=withTime?[["123",CLOCK2+"Time"],["ABC","A\u2013Z"],["KM",NEAR+"Near"]]
+                     :[["ABC","A\u2013Z"],["KM",NEAR+"Near"]];
+  return `<div class="ctrl"><div class="seg">${opts.map(([k,lbl])=>
+      `<button class="${sortMode===k?"on":""}" data-sort="${k}">${lbl}</button>`).join("")}</div>
+    <button class="locbtn${ME?" on":""}" id="loc" aria-label="Sync location">${LOC}</button></div>`;
+}
+
 function plansBlock(x){
   const list=PLANS[x.date]||[];
-  const timed=list.map((p,i)=>({p,i})).filter(({p})=>p.time).sort((a,b)=>a.p.time.localeCompare(b.p.time));
-  const loose=list.map((p,i)=>({p,i})).filter(({p})=>!p.time);
-  let body="";
-  if(list.length){
-    body=timed.map(({p,i})=>planRow(p,i,x.date)).join("");
-    if(loose.length) body+=loose.map(({p,i})=>planRow(p,i,x.date)).join("");
+  let rows=list.map((p,i)=>({p,i}));
+  if(sortMode==="123"){
+    const timed=rows.filter(({p})=>p.time).sort((a,b)=>a.p.time.localeCompare(b.p.time));
+    rows=timed.concat(rows.filter(({p})=>!p.time));
+  }else{
+    rows=sortList(rows,(o)=>o.p);
   }
-  if(pick) body+=picker(x);
-  else if(editing===null) body+=`<button class="bigadd" id="p-add">+ New plan</button>`;
-  return panel("plans","Plans",list.length||"",body,{lead:`<button class="locbtn${ME?" on":""}" id="loc" aria-label="Sync location">${LOC}</button>`});
+  let body="";
+  if(list.length) body=rows.map(({p,i})=>planRow(p,i,x.date)).join("");
+  const lead="";
+  const ctrl=sortCtrl(true);
+  if(pick) return panel("plans","Add a plan","",picker(x));
+  if(editing===null) body+=`<button class="bigadd" id="p-add">+ New plan</button>`;
+  return panel("plans","Plans",list.length||"",(list.length>1?ctrl:"")+body);
 }
 
 function wirePlans(x){
   const add=$("#p-add");
-  if(add) add.addEventListener("click",()=>{pick={q:"",time:"",end:"",sec:null};editing=null;drawDay()});
+  if(add) add.addEventListener("click",()=>{pick={q:"",sec:null,cat:null};editing=null;drawDay()});
 
+  $("#screen").querySelectorAll("[data-trav]").forEach((b)=>b.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    travOpen=travOpen===+b.dataset.trav?null:+b.dataset.trav; drawDay();
+  }));
+  $("#screen").querySelectorAll("[data-delplan]").forEach((b)=>b.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    PLANS[x.date].splice(+b.dataset.delplan,1);
+    if(!PLANS[x.date].length)delete PLANS[x.date];
+    savePlans(); editing=null; drawDay(); push(x.date); toast("Deleted");
+  }));
+  wireSwipe(x);
   $("#screen").querySelectorAll("[data-editplan]").forEach((b)=>b.addEventListener("click",()=>{
     editing=+b.dataset.editplan; pick=null; drawDay();
   }));
 
   if(pick){
     const q=$("#pk-q");
-    const sync=()=>{ pick.q=q.value; pick.time=$("#pk-time").value; pick.end=$("#pk-end").value; };
-    q.addEventListener("input",()=>{ const was=!!parseSpot(pick.q).url; pick.q=q.value;
-      if(was!==!!parseSpot(pick.q).url){ pick.sec=null; drawDay(); $("#pk-q").focus(); } else drawDay2(); });
+    const sync=()=>{ pick.q=q.value; };
+    q.addEventListener("input",()=>{
+      const caret=q.selectionStart, wasLink=!!parseSpot(pick.q).url;
+      pick.q=q.value;
+      if(wasLink!==!!parseSpot(pick.q).url) pick.sec=null;
+      drawDay();
+      const n=$("#pk-q"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
+    });
     q.addEventListener("paste",()=>setTimeout(()=>{pick.q=q.value;pick.sec=null;drawDay();$("#pk-q").focus();},0));
     $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
+    $("#screen").querySelectorAll("[data-travspot]").forEach((b)=>b.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const k="s"+b.dataset.travspot;
+      travOpen=travOpen===k?null:k; drawDay();
+    }));
+    $("#screen").querySelectorAll("[data-cat]").forEach((b)=>b.addEventListener("click",()=>{
+      pick.cat=b.dataset.cat;
+      if(b.dataset.cat==="__near"&&!ME){ askLoc(); return; }
+      drawDay();
+    }));
+    if($("#pk-back")) $("#pk-back").addEventListener("click",()=>{pick.cat=null;drawDay()});
     $("#screen").querySelectorAll("[data-psec]").forEach((b)=>b.addEventListener("click",()=>{sync();pick.sec=b.dataset.psec;drawDay()}));
 
     $("#screen").querySelectorAll("[data-pickspot]").forEach((b)=>b.addEventListener("click",()=>{
@@ -1235,27 +1493,74 @@ function wirePlans(x){
   }
 }
 
+function swipeOn(sel,stages){
+  $("#screen").querySelectorAll(sel).forEach((el)=>{
+    let x0=null,y0=null,dx=0,lock=null;
+    const paint=()=>{
+      el.classList.toggle("s1",dx<=-58&&dx>-132);
+      el.classList.toggle("s2",dx<=-132);
+    };
+    el.addEventListener("touchstart",(e)=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;dx=0;lock=null;el.style.transition="";},{passive:true});
+    el.addEventListener("touchmove",(e)=>{
+      if(x0==null)return; const t=e.touches[0];
+      const ax=t.clientX-x0, ay=t.clientY-y0;
+      if(lock===null) lock=Math.abs(ax)>Math.abs(ay)+6?"x":"y";
+      if(lock!=="x")return;
+      dx=Math.max(-180,Math.min(0,ax));
+      el.style.transform=`translateX(${dx}px)`; paint();
+    },{passive:true});
+    el.addEventListener("touchend",()=>{
+      if(lock!=="x"){x0=null;return;}
+      el.style.transition="transform .18s ease";
+      const d=dx; el.style.transform=""; el.classList.remove("s1","s2"); x0=null;
+      if(d<=-132) stages.far(el);
+      else if(d<=-58) stages.near(el);
+    });
+  });
+}
+
+function wireSwipe(x){
+  swipeOn("[data-swipespot]",{
+    near:(el)=>{const [c,i]=el.dataset.swipespot.split("|");
+      SPOTS[c][+i].done=!SPOTS[c][+i].done; saveSpots(); draw(); push("spots:"+c);},
+    far:(el)=>{const [c,i]=el.dataset.swipespot.split("|");
+      SPOTS[c].splice(+i,1); if(!SPOTS[c].length)delete SPOTS[c];
+      saveSpots(); draw(); push("spots:"+c); toast("Removed");}
+  });
+  $("#screen").querySelectorAll("[data-swipe]").forEach((el)=>{
+    let x0=null,y0=null,dx=0,lock=null;
+    el.addEventListener("touchstart",(e)=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;dx=0;lock=null;el.style.transition="";},{passive:true});
+    el.addEventListener("touchmove",(e)=>{
+      if(x0==null)return; const t=e.touches[0];
+      const ax=t.clientX-x0, ay=t.clientY-y0;
+      if(lock===null) lock=Math.abs(ax)>Math.abs(ay)+6?"x":"y";
+      if(lock!=="x")return;
+      dx=Math.min(0,ax);
+      el.style.transform=`translateX(${dx}px)`;
+      el.classList.toggle("s2",dx<-90);
+    },{passive:true});
+    el.addEventListener("touchend",()=>{
+      if(lock!=="x"){x0=null;return;}
+      el.style.transition="transform .18s ease";
+      if(dx<-90){
+        el.style.transform="translateX(-100%)";
+        setTimeout(()=>{
+          PLANS[x.date].splice(+el.dataset.swipe,1);
+          if(!PLANS[x.date].length)delete PLANS[x.date];
+          savePlans(); drawDay(); push(x.date); toast("Deleted");
+        },160);
+      }else{ el.style.transform=""; el.classList.remove("arm"); }
+      x0=null;
+    });
+  });
+}
+
 function addPlan(x,p){
   const list=PLANS[x.date]=PLANS[x.date]||[];
-  list.push({what:"",...p,time:pick.time||"",end:pick.end||""});
+  list.push({what:"",...p,time:"",end:""});
   savePlans(); pick=null; editing=list.length-1; drawDay(); push(x.date);
 }
 
-function drawDay2(){
-  const x=DAYS[cur];
-  const el=$(".picker .opts"); if(!el){drawDay();return;}
-  const tmp=document.createElement("div"); tmp.innerHTML=picker(x);
-  el.innerHTML=tmp.querySelector(".opts").innerHTML;
-  const nw=tmp.querySelector("#pk-new"), cur_=$("#pk-new");
-  if(!!nw!==!!cur_){ const pos=$("#pk-q").selectionStart; drawDay(); $("#pk-q").focus(); try{$("#pk-q").setSelectionRange(pos,pos)}catch{} return; }
-  if(nw&&cur_) cur_.innerHTML=nw.innerHTML;
-  $("#screen").querySelectorAll("[data-pickspot]").forEach((b)=>b.addEventListener("click",()=>{
-    pick.q=$("#pk-q").value; pick.time=$("#pk-time").value; pick.end=$("#pk-end").value;
-    const sp=(SPOTS[x.city]||[])[+b.dataset.pickspot];
-    addPlan(x,{where:sp.name,type:sp.type||"",price:sp.price||"",meals:sp.meals||"",url:sp.url,lat:sp.lat,lng:sp.lng,phone:sp.phone||"",hours:sp.hours||null});
-  }));
-  if(cur_) cur_.addEventListener("click",()=>$("#pk-new").click());
-}
 
 const codes=(l)=>!l?"":`<div class="codes">${l.map((c)=>
   `<button class="code" data-copy="${esc(c.value)}"><span class="l">${esc(c.label)}</span><span class="v">${esc(c.value)}</span></button>`).join("")}</div>`;

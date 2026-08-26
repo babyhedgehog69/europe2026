@@ -397,7 +397,8 @@ svg.mini{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;s
 .pnl>.ph .hbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin:0}
 .mapwrap{padding-bottom:14px;border-bottom:1px solid var(--edge);margin-bottom:2px}
 .mmap{display:block;width:100%;height:auto;border:1.5px solid var(--edge);background:var(--wash)}
-.mapkey{font-family:var(--mn);font-size:12px;color:var(--mute);margin-top:9px;line-height:1.6}
+.mapkey{font-family:var(--mn);font-size:12px;color:var(--mute);margin-top:9px;line-height:1.7}
+.mapkey b{color:var(--fg);font-weight:700}
 </style>
 </head>
 <body>
@@ -1395,6 +1396,16 @@ function sortCtrl(withTime){
     <button class="locbtn${ME?" on":""}" id="loc" aria-label="Sync location">${LOC}</button></div>`;
 }
 
+const SKIP=new Set(["the","a","an","of","de","du","la","le","el","and","at","in","on","d","der","das","den"]);
+function abbr(str){
+  const w=(str||"").replace(/[^\p{L}\p{N} ]/gu," ").trim().split(/\s+/).filter(Boolean);
+  const keep=w.filter((t,i)=>i===0?!SKIP.has(t.toLowerCase())||w.length===1:!SKIP.has(t.toLowerCase()));
+  const use=keep.length?keep:w;
+  if(!use.length) return "?";
+  if(use.length===1) return use[0].slice(0,3).toUpperCase();
+  return (use[0][0]+use[1][0]).toUpperCase();
+}
+
 function geoPlans(x){
   const list=PLANS[x.date]||[];
   const rows=list.map((p,i)=>({p,i})).filter(({p})=>p.lat!=null&&!p.done);
@@ -1438,11 +1449,14 @@ function miniMap(x){
     <svg viewBox="0 0 ${W} ${H}" class="mmap" aria-hidden="true">
       ${g.length>1?`<path d="${path}" fill="none" stroke="var(--mute)" stroke-width="1.4" stroke-dasharray="4 3"/>`:""}
       ${ME?`<circle cx="${sx(pts[pts.length-1].x).toFixed(1)}" cy="${sy(pts[pts.length-1].y).toFixed(1)}" r="5" fill="none" stroke="var(--p2)" stroke-width="1.6"/>`:""}
-      ${g.map((p,i)=>{const q=pts[i];return `<g><circle cx="${sx(q.x).toFixed(1)}" cy="${sy(q.y).toFixed(1)}" r="9" fill="var(--fg)"/><text x="${sx(q.x).toFixed(1)}" y="${(sy(q.y)+3.6).toFixed(1)}" text-anchor="middle" font-size="10" font-family="monospace" fill="var(--bg)">${i+1}</text></g>`;}).join("")}
+      ${g.map((p,i)=>{
+        const q=pts[i], lbl=abbr(p.what||p.where), w=lbl.length*8+14, cxp=sx(q.x), cyp=sy(q.y);
+        return `<g><rect x="${(cxp-w/2).toFixed(1)}" y="${(cyp-9).toFixed(1)}" width="${w}" height="18" rx="9" fill="var(--fg)"/><text x="${cxp.toFixed(1)}" y="${(cyp+3.8).toFixed(1)}" text-anchor="middle" font-size="10.5" font-family="monospace" fill="var(--bg)">${esc(lbl)}</text></g>`;
+      }).join("")}
       <line x1="${PAD}" y1="${H-10}" x2="${PAD+barPx.toFixed(1)}" y2="${H-10}" stroke="var(--mute)" stroke-width="1.4"/>
       <text x="${PAD+barPx/2}" y="${H-15}" text-anchor="middle" font-size="9" font-family="monospace" fill="var(--mute)">${barKm<1?barKm*1000+" m":barKm+" km"}</text>
     </svg>
-    <p class="mapkey">${g.map((p,i)=>`${i+1} ${esc(p.what||p.where||"")}`).join("  &middot;  ")}${noLoc?` &middot; ${noLoc} without a location`:""}</p>
+    <p class="mapkey">${g.map((p)=>`<b>${esc(abbr(p.what||p.where))}</b> ${esc(p.what||p.where||"")}`).join("  &middot;  ")}${noLoc?`  &middot;  ${noLoc} without a location`:""}</p>
   </div>`;
 }
 

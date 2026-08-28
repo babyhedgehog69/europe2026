@@ -90,12 +90,12 @@ input[type=time]{min-height:42px}
 .dow{font-family:var(--mn);font-size:11px;color:var(--mute);text-align:center;padding:9px 0;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge)}
 .dow:nth-child(7n){border-right:0}
 .cell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--edge);border-bottom:1px solid var(--edge);background:var(--bg);position:relative;padding:0}
-.cell.trip{background:color-mix(in srgb,var(--cc) 78%,var(--bg));color:#12150F}
-.cell.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 78%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 78%,var(--bg)) 50% 100%)}
-.cell.past.trip{background:color-mix(in srgb,var(--cc) 30%,var(--bg));color:var(--mute)}
-.cell.past.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 30%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 30%,var(--bg)) 50% 100%)}
+.cell.trip{background:color-mix(in srgb,var(--cc) 42%,var(--bg));color:var(--fg)}
+.cell.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 42%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 42%,var(--bg)) 50% 100%)}
+.cell.past.trip{background:color-mix(in srgb,var(--cc) 18%,var(--bg));color:var(--fg);opacity:.55}
+.cell.past.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 18%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 18%,var(--bg)) 50% 100%)}
 .cnum{position:absolute;top:5px;right:7px;font-family:var(--mn);font-size:14px;line-height:1;opacity:.8}
-.cell.trip .cnum{opacity:.9}
+.cell.trip .cnum{opacity:1}
 .cell:nth-child(7n){border-right:0}
 
 .cell.out{color:color-mix(in srgb,var(--mute) 42%,var(--bg))}
@@ -118,7 +118,7 @@ input[type=time]{min-height:42px}
 .chips .flag{width:15px;height:9px}
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:9px 16px;padding:14px var(--pad);border-top:1px solid var(--edge)}
 .legend span{display:flex;align-items:center;gap:5px;font-family:var(--mn);font-size:12.5px;color:var(--mute)}
-.legend i{width:13px;height:8px;display:block}
+.legend i{width:16px;height:5px;border-radius:2px;display:block;flex:0 0 auto}
 
 .nav{border:1.5px solid var(--edge);border-top:0}
 .navrow{display:flex;align-items:center;gap:var(--gap);padding:12px var(--pad)}
@@ -373,6 +373,13 @@ button,a{-webkit-tap-highlight-color:transparent}
 .pnl>.ph .phmain,.pgh,.cat,.opt,.seg button{-webkit-touch-callout:none}
 .swipe-body,.pnl,.cell{-webkit-backface-visibility:hidden}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+body.light .cell.trip{background:color-mix(in srgb,var(--cc) 62%,var(--bg))}
+body.light .cell.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 62%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 62%,var(--bg)) 50% 100%)}
+body.light .cell.past.trip{background:color-mix(in srgb,var(--cc) 26%,var(--bg))}
+body.light .cell.past.trip.split{background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 26%,var(--bg)) 0 50%,color-mix(in srgb,var(--cc2) 26%,var(--bg)) 50% 100%)}
+.cell.dot::after{opacity:1}
+.legend i.ldot{width:7px;height:7px;border-radius:50%;background:var(--fg)}
 </style>
 </head>
 <body>

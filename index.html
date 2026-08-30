@@ -167,6 +167,10 @@ svg.i{
   font-weight:800;font-stretch:var(--wider);font-size:var(--t5);
   text-transform:uppercase;letter-spacing:var(--ls-cap);
 }
+/* creating something new is the same family of action as the standalone +
+   button, so it wears the same city colour rather than falling back to
+   plain ink */
+.save.city{background:var(--p1);color:var(--pink,var(--bg))}
 /* the outline button */
 .form .cancel,.form .kill,.picker .cancel{
   width:100%;padding:var(--s4);text-align:center;
@@ -563,6 +567,7 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
 .opt{display:block;width:100%;padding:var(--s4) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
 .opt span{display:block;font-family:var(--mn);font-size:var(--t6);color:var(--mute);margin-top:var(--s1);line-height:1.5}
 .opt.dim{opacity:.45}
+.opt.new{font-weight:800;text-transform:uppercase;letter-spacing:var(--ls-cap);font-size:var(--t6)}
 
 .cats{display:flex;flex-direction:column}
 .cat{display:flex;align-items:center;gap:var(--gap);width:100%;padding:var(--s5) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
@@ -1418,10 +1423,10 @@ function drawPlaces(){
         const dNote=(pick&&pick.note)||"";
         return `<div class="picker">
         <input id="s-paste" value="${esc(pasteText)}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
-        <div class="fld"><span class="k">Name</span><input id="s-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
+        <div class="fld"><input id="s-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
         <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
         <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
-        <div class="row2"><button class="cancel" id="s-cancel">Cancel</button><button class="save" id="s-save">Add place</button></div>
+        <div class="row2"><button class="cancel" id="s-cancel">Cancel</button><button class="save city" id="s-save" style="--pink:${inkOn([c.pop1||fgHex()],1)}">Add place</button></div>
       </div>`;})():`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
     return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
   }).join("");
@@ -1926,25 +1931,30 @@ function picker(x){
     hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
     exact=pool.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
   }
-  const creating=isLink||(!!q&&!exact);
+  /* a pasted link needs no confirming -- straight to the form. plain text
+     only commits to "creating" once you've explicitly said so, so a single
+     typed letter doesn't yank the whole screen into a form while you're
+     still just searching. */
+  const creating=isLink||!!pick.newMode;
   let body;
   if(creating){
-    /* one form, whether you pasted a link or just typed a name that doesn't
-       exist yet: a real editable title, a category, an optional time, an
-       optional note. the search bar's job is done once you're here, so it
-       steps aside for Cancel / Add Plan directly below the form. */
     const dName=pick.name!=null?pick.name:(parsed.name||q);
     const dSec=pick.sec||parsed.sec||SECTIONS[0];
     const dNote=pick.note!=null?pick.note:"";
     const dTime=pick.time!=null?pick.time:"";
     const dEnd=pick.endTime!=null?pick.endTime:"";
-    body=`<div class="fld"><span class="k">Name</span><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
+    /* nothing else on screen while creating -- no matching plans, no list */
+    body=`<div class="fld"><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
       <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
-      <div class="fld"><span class="k">When <i>(optional)</i></span><div class="two">
+      <div class="fld"><div class="two">
         <input id="pk-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dTime)}"><span>to</span><input id="pk-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dEnd)}">
       </div></div>
-      <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
-      ${(!isLink&&q)?`<div class="opts">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`:""}`;
+      <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>`;
+  }else if(!!q){
+    /* searching: show what matches, plus one explicit way to start something
+       new. tapping that -- not typing itself -- is what commits to creating. */
+    body=`<div class="opts">${hits.length?listOf(hits):""}
+      <button class="opt new" data-newmode="1">+ Create &ldquo;${esc(q)}&rdquo;</button></div>`;
   }else if(pick.cat){
     pickHead={label:pick.cat==="__near"?"Nearby":pick.cat,meta:""};
     const items=pick.cat==="__near"
@@ -1967,15 +1977,15 @@ function picker(x){
     ${body}
     ${creating?"":`<input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">`}
     ${creating
-      ?`<div class="row2"><button class="cancel" id="pk-new-cancel">Cancel</button><button class="save" id="pk-new">Add Plan</button></div>`
+      ?`<div class="row2"><button class="cancel" id="pk-new-cancel">Cancel</button><button class="save city" id="pk-new" style="--pink:${inkOn([x.p1||fgHex()],1)}">Add Plan</button></div>`
       :`<button class="cancel" id="pk-cancel">Cancel</button>`}
   </div>`;
 }
 
 function planEditor(p,i){
   return `<div class="form">
-    <div class="fld"><span class="k">Name</span><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
-    <div class="fld"><span class="k">When</span><div class="two">
+    <div class="fld"><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
+    <div class="fld"><div class="two">
       <input id="e-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.end||"")}">
     </div></div>
     <div class="fld"><span class="k">Notes</span><textarea id="e-note" rows="3" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
@@ -2137,8 +2147,11 @@ function wirePlans(x){
     if($("#pk-cancel")) $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
     wireTimeFields(["pk-time","pk-end"]);
     if($("#pk-new-cancel")) $("#pk-new-cancel").addEventListener("click",()=>{
-      pick.q="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;drawDay();
+      pick.q="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;pick.newMode=false;drawDay();
     });
+    $("#screen").querySelectorAll("[data-newmode]").forEach((b)=>b.addEventListener("click",()=>{
+      sync(); pick.newMode=true; drawDay();
+    }));
     $("#screen").querySelectorAll("[data-travspot]").forEach((b)=>b.addEventListener("click",(e)=>{
       e.stopPropagation();
       const k="s"+b.dataset.travspot;

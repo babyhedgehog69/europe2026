@@ -1,0 +1,10 @@
+{
+  "name": "Europe 2026",
+  "short_name": "Europe 26",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12150F",
+  "theme_color": "#12150F"
+}

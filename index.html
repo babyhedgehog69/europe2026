@@ -33,7 +33,7 @@
   /* colour: ink for all type, borders, controls.
      fill for the one primary action in a view.
      accent for identity only. red only inside a swipe drawer. */
-  --bg:#12150F; --fg:#F0E9D8; --mute:#8A8878; --wash:#2B3226; --edge:#F0E9D8;
+  --bg:#12150F; --fg:#F0E9D8; --mute:#8A8878; --wash:color-mix(in srgb,var(--fg) 13%,var(--bg)); --edge:#F0E9D8;
   --p1:#F0E9D8; --p2:#F0E9D8;
   --red:#FF6B60; --red-fill:#C8402F;
   --rule:color-mix(in srgb,var(--edge) 34%,transparent);
@@ -66,15 +66,23 @@
   --sa-w:56px;
 }
 html.light,body.light{
-  --bg:#F0E9D8; --fg:#16190F; --mute:#696758; --wash:#D8CDB2;
+  --bg:#F0E9D8; --fg:#16190F; --mute:#696758; --wash:color-mix(in srgb,var(--fg) 13%,var(--bg));
   --edge:#16190F; --p1:#16190F; --p2:#16190F;
 }
 /* the city colours are picked for a dark ground. on cream they vanish,
    so blend them toward the ink: same hue, readable at display size. */
-body.light .mast #mastcity{color:color-mix(in srgb,var(--mc,var(--fg)) 55%,var(--fg))}
+/* pop colours are picked to glow on a near-black canvas: pure and bright.
+   darkened enough to read on cream, that same hue turns to mud (a vivid
+   yellow becomes olive-brown, a vivid green becomes swamp). rather than
+   fight that, light mode keeps every title in ink and saves the city's
+   colour for FILLED shapes (the new-plan button, calendar tiles, flags),
+   where a contrast colour is chosen for it separately and it never has to
+   double as body text. dark mode is untouched: the bright tint reads fine
+   there and stays. */
+body.light .mast #mastcity,
 body.light .pnl.open>.ph .lbl,
-body.light .pnl>.ph .lbl.city{color:color-mix(in srgb,var(--p1) 55%,var(--fg))}
-body.light .leg a b{color:color-mix(in srgb,var(--ac,var(--fg)) 55%,var(--fg))}
+body.light .pnl>.ph .lbl.city,
+body.light .leg a b{color:var(--fg)}
 
 /* 2 ── RESET + BASE ───────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -572,13 +580,14 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
   flex:1 1 0;width:auto;min-width:0;
   padding:var(--s3);text-align:center;font-size:var(--t5);
 }
-.form textarea{
+.form textarea,.picker textarea{
   display:block;width:100%;resize:vertical;
   min-height:76px;padding:var(--s4);border-radius:0;
   font-family:var(--mn);font-size:var(--t4);line-height:1.5;
   background:var(--wash);color:var(--fg);border:var(--edge-w) solid var(--edge);
 }
-.form .row2{display:flex;gap:var(--s2)}
+.form .row2,.picker .row2{display:flex;gap:var(--s2)}
+.picker .row2 .save,.picker .row2 .cancel{flex:1 1 0}
 .form .cancel,.form .kill{flex:1 1 auto}
 
 /* 14 ── PLACES ────────────────────────────────────────────── */
@@ -923,7 +932,7 @@ function start(trip){
   cur=i>=0?i:(today>TRIP.meta.end?DAYS.length-1:0);
   $("#app").innerHTML=`
     <div class="mast"><button id="mastcity" aria-label="Month view">Europe 2026</button>
-      <span class="grp"><a id="home" aria-label="Hotel">${HOME}</a><button id="clk" aria-label="Time format">${CLOCK}</button><button id="units" aria-label="Temperature units">${units==="C"?"\u00B0C":"\u00B0F"}</button><button id="fx" aria-label="Currency">&euro;</button><button id="invert" aria-label="Invert colours"></button></span></div>
+      <span class="grp"><a id="home" aria-label="Hotel">${HOME}</a><button id="clk" aria-label="Time format">${clock12?"12":"24"}</button><button id="units" aria-label="Temperature units">${units==="C"?"\u00B0C":"\u00B0F"}</button><button id="fx" aria-label="Currency">&euro;</button><button id="invert" aria-label="Invert colours"></button></span></div>
     <div id="fxbox"></div>
     <div id="screen"></div>
     <div class="foot"><span class="fmeta"><button id="sync" aria-label="Sync status, tap to retry">…</button><span id="ver">${BUILD}</span></span><span class="fbtns"><button id="clearplans">CLEAR PLANS</button><button id="forget">LOCK THIS DEVICE</button></span></div>`;
@@ -951,6 +960,7 @@ function start(trip){
     clock12=!clock12;
     try{localStorage.setItem("eu26.clock",clock12?"12":"24")}catch{}
     $("#clk").classList.toggle("on",clock12);
+    $("#clk").textContent=clock12?"12":"24";
     draw();
   });
   $("#units").addEventListener("click",()=>{
@@ -1039,6 +1049,7 @@ const REL=(rgb)=>{
 };
 const RATIO=(a,b)=>{const x=REL(a),y=REL(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05)};
 function inkOn(colors,pct){
+  colors=colors.map((c)=>(c&&/^#[0-9a-f]{6}$/i.test(c))?c:fgHex());
   const bgv=getComputedStyle(document.body).getPropertyValue("--bg").trim();
   const bg=hex2rgb(bgv.startsWith("#")?bgv:"#12150F");
   const mix=colors.map((c)=>hex2rgb(c).map((v,i)=>v*pct+bg[i]*(1-pct)));
@@ -1118,15 +1129,24 @@ const hasCar=(date)=>(TRIP&&TRIP.cars||[]).some((c)=>
   c.pickup&&c.dropoff&&c.pickup.date<=date&&date<=c.dropoff.date);
 const nearMin=(date,k)=>hasCar(date)?driveMin(k):walkMin(k);
 const nearWord=(date)=>hasCar(date)?"drive":"walk";
+/* the date that decides car-vs-transit for a CITY's places is that city's
+   own date, not whatever day you happen to be looking at -- browsing
+   Mallorca's places while you're actually in Berlin should still say drive. */
+const dateForCity=(city)=>{const d=DAYS.find((d)=>d.city===city); return d?d.date:(DAYS[cur]||{}).date;};
 
 const dur=(m)=>m<90?`${m} min`:(m<1440?`${Math.round(m/60)} h`:`${Math.round(m/1440)} d`);
 
-/* the one line that lets you compare rows by eye when sorted by distance */
-function distLine(sp){
+/* the one line that lets you compare rows by eye when sorted by distance.
+   walking only if it is a real option; past that, whichever mode the CITY
+   actually supports -- never a drive estimate in a city with no rental
+   car, never a transit estimate on an island with no useful public transit */
+function distLine(sp,modeDate){
   if(!ME||sp.lat==null) return "";
   const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
-  const drive=k>2;
-  return `${fmtKm(k)} &middot; ${dur(drive?driveMin(k):walkMin(k))} ${drive?"drive":"walk"}`;
+  const w=walkMin(k);
+  if(w<=30) return `${fmtKm(k)} &middot; ${dur(w)} walk`;
+  if(hasCar(modeDate||(DAYS[cur]||{}).date)) return `${fmtKm(k)} &middot; ${dur(driveMin(k))} drive`;
+  return `${fmtKm(k)} &middot; transit`;
 }
 
 function far(sp){
@@ -1339,9 +1359,9 @@ function placeRow(sp,i,city,date,hidden){
     </div>
     <div class="swipe-body"><div class="spot${hidden?" gone":""}">
       ${rowHead(sp,date,links(sp)+`<button class="grip" data-grip aria-label="Actions">${GRIP}</button>`,
-        (sortMode==="KM"&&distLine(sp)?`<button class="rdist" data-travplace="${esc(city)}|${i}">${distLine(sp)}</button>`:"")
+        (sortMode==="KM"&&distLine(sp,dateForCity(city))?`<button class="rdist" data-travplace="${esc(city)}|${i}">${distLine(sp,dateForCity(city))}</button>`:"")
         +infoLine(sp,date)).html}
-      ${travOpen==="p"+city+"|"+i?travelRow(sp):""}
+      ${travOpen==="p"+city+"|"+i?travelRow(sp,dateForCity(city)):""}
     </div></div></div>`;
 }
 
@@ -1367,16 +1387,21 @@ function drawPlaces(){
       }).join(""):`<p class="empty">Nothing saved yet.</p>`}
       ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
         ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
-      ${adding?`<div class="picker">
+      ${adding?(()=>{
+        const dName=(pick&&pick.name!=null)?pick.name:(parsed.name||pasteText.replace(/https?:\/\/\S+/g,"").trim());
+        const dSec=(pick&&pick.sec)||parsed.sec||SECTIONS[0];
+        const dNote=(pick&&pick.note)||"";
+        return `<div class="picker">
         <input id="s-paste" value="${esc(pasteText)}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
-        <div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick&&pick.sec||parsed.sec||SECTIONS[1])===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
-        <button class="save" id="s-save">Add to ${esc(c.city)}</button>
-        <button class="cancel" id="s-cancel">Cancel</button>
-      </div>`:`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
+        <div class="fld"><span class="k">Name</span><input id="s-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
+        <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+        <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" placeholder="Optional" autocomplete="off">${esc(dNote)}</textarea></div>
+        <div class="row2"><button class="cancel" id="s-cancel">Cancel</button><button class="save" id="s-save">Add place</button></div>
+      </div>`;})():`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
     return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
   }).join("");
 
-  $("#screen").innerHTML=`<div style="--p1:${x.p1};--p2:${x.p2}">
+  $("#screen").innerHTML=`<div style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">
     ${body}
     ${tabs()}
   </div>`;
@@ -1409,7 +1434,7 @@ function drawPlaces(){
     draw();
   }));
   $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{
-    pasting=b.dataset.add; pasteText=""; pick={sec:null}; openPanel=b.dataset.add; draw();
+    pasting=b.dataset.add; pasteText=""; pick={sec:null,name:null,note:null}; openPanel=b.dataset.add; draw();
   }));
   wireSpotActions(()=>draw());
   wireSwipe(DAYS[cur]);
@@ -1418,18 +1443,23 @@ function drawPlaces(){
     const city=pasting.slice(5);
     const inp=$("#s-paste");
     inp.addEventListener("input",()=>{ pasteText=inp.value; });
-    inp.addEventListener("paste",()=>setTimeout(()=>{pasteText=inp.value;pick={sec:null};draw()},0));
-    $("#s-cancel").addEventListener("click",()=>{pasting=null;pasteText="";draw()});
+    inp.addEventListener("paste",()=>setTimeout(()=>{pasteText=inp.value;pick={sec:(pick&&pick.sec)||null,name:null,note:null};draw()},0));
+    if($("#s-cancel")) $("#s-cancel").addEventListener("click",()=>{pasting=null;pasteText="";pick=null;draw()});
     $("#screen").querySelectorAll("[data-psec]").forEach((b)=>b.addEventListener("click",()=>{
-      pasteText=$("#s-paste").value; pick={sec:b.dataset.psec}; draw();
+      pasteText=$("#s-paste").value;
+      const n=$("#s-name"),no=$("#s-note");
+      pick={sec:b.dataset.psec,name:n?n.value:(pick&&pick.name),note:no?no.value:(pick&&pick.note)};
+      draw();
     }));
-    $("#s-save").addEventListener("click",()=>{
+    if($("#s-save")) $("#s-save").addEventListener("click",()=>{
       const txt=$("#s-paste").value;
       const pr=parseSpot(txt);
-      const name=pr.name||txt.trim();
+      const nameEl=$("#s-name");
+      const name=(nameEl?nameEl.value:"").trim()||pr.name||txt.replace(/https?:\/\/\S+/g,"").trim();
       if(!name){ toast("Needs a name or a link"); return; }
-      (SPOTS[city]=SPOTS[city]||[]).push({name,url:pr.url||"",sec:(pick&&pick.sec)||pr.sec,lat:pr.lat,lng:pr.lng});
-      saveSpots(); pasting=null; pasteText=""; draw(); push("spots:"+city); toast("Added to "+city);
+      const note=($("#s-note")||{}).value||"";
+      (SPOTS[city]=SPOTS[city]||[]).push({name,url:pr.url||"",sec:(pick&&pick.sec)||pr.sec||SECTIONS[0],lat:pr.lat,lng:pr.lng,note});
+      saveSpots(); pasting=null; pasteText=""; pick=null; draw(); push("spots:"+city); toast("Added "+name);
     });
   }
 }
@@ -1578,7 +1608,7 @@ function drawDay(){
   html+=plansBlock(x);
 
   $("#screen").innerHTML=`
-    <div class="nav" style="--p1:${x.p1};--p2:${x.p2}">
+    <div class="nav" style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">
       <div class="navrow">
         <button class="arw" id="prev" ${cur===0?"disabled":""} aria-label="Previous day">&larr;</button>
         <button id="datebtn"><b>${DOW[t.getDay()]} ${t.getDate()} ${MON[t.getMonth()]}</b><span>${x.date<iso(new Date())?"DONE &middot; ":""}DAY ${cur+1} / ${DAYS.length}${wxSummary(x)?" &middot; "+esc(wxSummary(x)):""}</span></button>
@@ -1586,7 +1616,7 @@ function drawDay(){
       </div>
       <div class="wxrow">${weatherBox(x)}</div>
     </div>
-    <div class="${x.date<iso(new Date())?"past-day":""}" style="--p1:${x.p1};--p2:${x.p2}">${html}</div>`;
+    <div class="${x.date<iso(new Date())?"past-day":""}" style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">${html}</div>`;
 
   paintMast(x);
   $("#prev").addEventListener("click",()=>go(cur-1));
@@ -1713,15 +1743,16 @@ function closedDays(sp){
   return on.length<=2?on.join(" and ")+" only":"closed "+off.join(", ");
 }
 
-function travelRow(sp){
+function travelRow(sp,modeDate){
   if(sp.lat==null||!ME) return "";
   const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
   const dir=(m)=>`https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}&travelmode=${m}`;
   const w=walkMin(k);
+  const car=hasCar(modeDate||(DAYS[cur]||{}).date);
   return `<div class="trav">
-    ${w<=120?`<a href="${dir("walking")}" target="_blank" rel="noopener">${WALK}${dur(w)}</a>`:""}
-    <a href="${dir("transit")}" target="_blank" rel="noopener">${RAIL}Transit</a>
-    <a href="${dir("driving")}" target="_blank" rel="noopener">${CAR}${dur(driveMin(k))}</a>
+    ${w<=30?`<a href="${dir("walking")}" target="_blank" rel="noopener">${WALK}${dur(w)}</a>`:""}
+    ${car?`<a href="${dir("driving")}" target="_blank" rel="noopener">${CAR}${dur(driveMin(k))}</a>`
+         :`<a href="${dir("transit")}" target="_blank" rel="noopener">${RAIL}Transit</a>`}
   </div>`;
 }
 
@@ -1820,7 +1851,7 @@ function planRow(p0,i,date){
   const head=p.where||p.what||"Plan";
   const acts=links(p)
     +(editing===i?"":`<button class="grip" data-grip data-dragh="${i}" aria-label="Actions, drag to reorder">${GRIP}</button>`);
-  const d=sortMode==="KM"?distLine(p):"";
+  const d=sortMode==="KM"?distLine(p,date):"";
   const sub=(d?`<button class="rdist" data-trav="${i}">${d}</button>`:"")+infoLine(p,date);
   const hd=rowHead({...p,name:head},date,acts,sub);
   return `<div class="swipe${p.done?" arch":""}${hd.shut?" shut":""}" id="plan-${i}">
@@ -1832,7 +1863,7 @@ function planRow(p0,i,date){
     <div class="swipe-body"><div class="plan">
     <button class="ptime${p.time?"":" tbd"}${editing===i?" on":""}" data-time="${i}" aria-label="${p.time?"Time":"Set a time"}"><span>${t||"--:--"}</span><i></i></button>
     ${hd.html}
-    ${travOpen===i?travelRow(p):""}
+    ${travOpen===i?travelRow(p,date):""}
     ${editing===i?planEditor(p,i):""}
   </div></div></div>`;
 }
@@ -1853,9 +1884,9 @@ function picker(x){
 
   const row=(o,dim)=>`<div class="optwrap${openNow(o.sp,x.date)&&!openNow(o.sp,x.date).open?" shut":""}">
       <button class="opt${dim?" dim":""}" data-pickspot="${o.i}">
-        ${rowHead(o.sp,x.date,"",(sortMode==="KM"&&distLine(o.sp)?`<span class="rdist">${distLine(o.sp)}</span>`:"")+infoLine(o.sp,x.date)+(dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):"")).html}
+        ${rowHead(o.sp,x.date,"",(sortMode==="KM"&&distLine(o.sp,x.date)?`<span class="rdist">${distLine(o.sp,x.date)}</span>`:"")+infoLine(o.sp,x.date)+(dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):"")).html}
       </button>
-      ${travOpen==="s"+o.i?travelRow(o.sp):""}
+      ${travOpen==="s"+o.i?travelRow(o.sp,x.date):""}
     </div>`;
 
   const listOf=(arr)=>{
@@ -1865,15 +1896,30 @@ function picker(x){
     return fresh.map((o)=>row(o)).join("")+used.map((o)=>row(o,true)).join("");
   };
 
+  let hits=[], exact=false;
+  if(!isLink&&q){
+    hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
+    exact=pool.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
+  }
+  const creating=isLink||(!!q&&!exact);
   let body;
-  if(isLink){
-    body=`<div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick.sec||parsed.sec)===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
-      <button class="save" id="pk-new">Add ${esc(parsed.name||"this place")}</button>`;
-  }else if(q){
-    const hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
-    const exact=pool.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
-    body=`${exact?"":`<button class="save" id="pk-new">Add &ldquo;${esc(q)}&rdquo;</button>`}
-      <div class="opts">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`;
+  if(creating){
+    /* one form, whether you pasted a link or just typed a name that doesn't
+       exist yet: a real editable title, a category, an optional time, an
+       optional note. the search bar's job is done once you're here, so it
+       steps aside for Cancel / Add Plan directly below the form. */
+    const dName=pick.name!=null?pick.name:(parsed.name||q);
+    const dSec=pick.sec||parsed.sec||SECTIONS[0];
+    const dNote=pick.note!=null?pick.note:"";
+    const dTime=pick.time!=null?pick.time:"";
+    const dEnd=pick.endTime!=null?pick.endTime:"";
+    body=`<div class="fld"><span class="k">Name</span><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
+      <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+      <div class="fld"><span class="k">When <i>(optional)</i></span><div class="two">
+        <input id="pk-time" type="time" autocomplete="off" value="${esc(dTime)}"><span>to</span><input id="pk-end" type="time" autocomplete="off" value="${esc(dEnd)}">
+      </div></div>
+      <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" placeholder="Optional" autocomplete="off">${esc(dNote)}</textarea></div>
+      ${(!isLink&&q)?`<div class="opts">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`:""}`;
   }else if(pick.cat){
     pickHead={label:pick.cat==="__near"?"Nearby":pick.cat,meta:""};
     const items=pick.cat==="__near"
@@ -1894,15 +1940,18 @@ function picker(x){
 
   return `<div class="picker">
     ${body}
-    <input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
-    <button class="cancel" id="pk-cancel">Cancel</button>
+    ${creating?"":`<input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">`}
+    ${creating
+      ?`<div class="row2"><button class="cancel" id="pk-new-cancel">Cancel</button><button class="save" id="pk-new">Add Plan</button></div>`
+      :`<button class="cancel" id="pk-cancel">Cancel</button>`}
   </div>`;
 }
 
 function planEditor(p,i){
   return `<div class="form">
+    <div class="fld"><span class="k">Name</span><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
     <div class="fld"><span class="k">When</span><div class="two">
-      <input id="e-time" type="time" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="time" value="${esc(p.end||"")}">
+      <input id="e-time" type="time" autocomplete="off" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="time" autocomplete="off" value="${esc(p.end||"")}">
     </div></div>
     <div class="fld"><span class="k">Note</span><textarea id="e-note" rows="3" placeholder="Optional" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
     <button class="save" id="e-save">Save</button>
@@ -1923,7 +1972,7 @@ function sortList(arr,getter,withTime){
 /* two toggles, both circles, mutually exclusive. neither one on means the
    natural order: by time for plans, in the order added for places. */
 const SORTWORD={ABC:"name","123":"the order you added them, timed plans first",KM:"distance"};
-const SORTFACE={ABC:"ABC","123":CLOCK,KM:PIN};
+const SORTFACE={ABC:"ABC","123":"123",KM:PIN};
 /* saved places have no times, so a clock is not an option there */
 const sortCycle=(withTime)=>withTime?["123","ABC","KM"]:["ABC","KM"];
 const effSort=(withTime)=>{
@@ -2022,7 +2071,7 @@ function plansBlock(x){
         :`<span class="hbtn off" aria-hidden="true">${ROUTE}</span>`);
   if(pick){ const pb=picker(x);
     return panel("plans",esc(pickHead.label),pickHead.meta,pb,{tail}); }
-  if(editing===null) body+=`<button class="bigadd" id="p-add" style="--pink:${inkOn([x.p1],1)}" aria-label="New plan">+</button>`;
+  if(editing===null) body+=`<button class="bigadd" id="p-add" style="--pink:${inkOn([x.p1||fgHex()],1)}" aria-label="New plan">+</button>`;
   return panel("plans","Plans","",(mapOpen?miniMap(x):"")+body,{tail});
 }
 
@@ -2042,18 +2091,28 @@ function wirePlans(x){
     editing=+b.dataset.editplan; pick=null; drawDay();
   }));
 
-  if(pick&&$("#pk-q")){
+  if(pick){
     const q=$("#pk-q");
-    const sync=()=>{ pick.q=q.value; };
-    q.addEventListener("input",()=>{
-      const caret=q.selectionStart, wasLink=!!parseSpot(pick.q).url;
-      pick.q=q.value;
-      if(wasLink!==!!parseSpot(pick.q).url) pick.sec=null;
-      drawDay();
-      const n=$("#pk-q"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
+    const sync=()=>{
+      if(q) pick.q=q.value;
+      const n=$("#pk-name"),no=$("#pk-note"),t=$("#pk-time"),e=$("#pk-end");
+      if(n) pick.name=n.value; if(no) pick.note=no.value;
+      if(t) pick.time=t.value; if(e) pick.endTime=e.value;
+    };
+    if(q){
+      q.addEventListener("input",()=>{
+        const caret=q.selectionStart, wasLink=!!parseSpot(pick.q).url;
+        pick.q=q.value;
+        if(wasLink!==!!parseSpot(pick.q).url) pick.sec=null;
+        drawDay();
+        const n=$("#pk-q"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
+      });
+      q.addEventListener("paste",()=>setTimeout(()=>{pick.q=q.value;pick.sec=null;drawDay();$("#pk-q").focus();},0));
+    }
+    if($("#pk-cancel")) $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
+    if($("#pk-new-cancel")) $("#pk-new-cancel").addEventListener("click",()=>{
+      pick.q="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;drawDay();
     });
-    q.addEventListener("paste",()=>setTimeout(()=>{pick.q=q.value;pick.sec=null;drawDay();$("#pk-q").focus();},0));
-    $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
     $("#screen").querySelectorAll("[data-travspot]").forEach((b)=>b.addEventListener("click",(e)=>{
       e.stopPropagation();
       const k="s"+b.dataset.travspot;
@@ -2081,19 +2140,24 @@ function wirePlans(x){
     if(nw) nw.addEventListener("click",()=>{
       sync();
       const p=parseSpot(pick.q);
-      const title=p.url?(p.name||"New place"):pick.q.trim();
+      const title=(pick.name||"").trim();
       if(!title) return;
+      const sec=pick.sec||p.sec||SECTIONS[0];
       if(p.url){
-        const sec=pick.sec||p.sec;
         (SPOTS[x.city]=SPOTS[x.city]||[]).push({name:title,url:p.url,sec,lat:p.lat,lng:p.lng});
         saveSpots(); push("spots:"+x.city);
       }
-      addPlan(x,{where:title,url:p.url||"",lat:p.lat,lng:p.lng});
+      const list=PLANS[x.date]=PLANS[x.date]||[];
+      list.push({where:title,url:p.url||"",lat:p.lat,lng:p.lng,time:pick.time||"",end:pick.endTime||"",note:pick.note||""});
+      savePlans(); snapTo="#plan-"+(list.length-1); push(x.date);
+      pick=null; drawDay(); toast("Added "+title);
+      return;
     });
   }
 
   if(typeof editing==="number"&&$("#e-cancel")){
     $("#e-cancel").addEventListener("click",()=>{editing=null;drawDay()});
+  const nameEl=$("#e-name");
     $("#e-kill").addEventListener("click",()=>{
       PLANS[x.date].splice(editing,1);
       if(!PLANS[x.date].length)delete PLANS[x.date];
@@ -2101,6 +2165,8 @@ function wirePlans(x){
     });
     $("#e-save").addEventListener("click",()=>{
       const p=PLANS[x.date][editing];
+      const name=($("#e-name").value||"").trim();
+      if(name) p.where=name;
       p.time=$("#e-time").value; p.end=$("#e-end").value; p.note=$("#e-note").value.trim();
       savePlans(); editing=null; drawDay(); push(x.date); toast("Saved");
     });

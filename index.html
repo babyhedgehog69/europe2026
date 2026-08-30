@@ -69,20 +69,8 @@ html.light,body.light{
   --bg:#F0E9D8; --fg:#16190F; --mute:#696758; --wash:color-mix(in srgb,var(--fg) 13%,var(--bg));
   --edge:#16190F; --p1:#16190F; --p2:#16190F;
 }
-/* the city colours are picked for a dark ground. on cream they vanish,
-   so blend them toward the ink: same hue, readable at display size. */
-/* pop colours are picked to glow on a near-black canvas: pure and bright.
-   darkened enough to read on cream, that same hue turns to mud (a vivid
-   yellow becomes olive-brown, a vivid green becomes swamp). rather than
-   fight that, light mode keeps every title in ink and saves the city's
-   colour for FILLED shapes (the new-plan button, calendar tiles, flags),
-   where a contrast colour is chosen for it separately and it never has to
-   double as body text. dark mode is untouched: the bright tint reads fine
-   there and stays. */
-body.light .mast #mastcity,
-body.light .pnl.open>.ph .lbl,
-body.light .pnl>.ph .lbl.city,
-body.light .leg a b{color:var(--fg)}
+/* the pop colour is fixed: the same hex, every theme, no adjustment.
+   Mallorca is the same yellow in light mode as it is in dark. */
 
 /* 2 ── RESET + BASE ───────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -400,7 +388,10 @@ svg.i{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .leg .mid .dur{display:block;font-family:var(--mn);font-size:var(--t6);color:var(--mute);margin-top:var(--s1);line-height:1.3}
-.plus{display:inline!important;margin:0!important;font-size:var(--t6)!important;background:var(--p2);color:#12150F!important;padding:0 3px}
+/* the ink colour comes inline, computed against whatever the badge's
+   actual background ends up being (a city colour, or a neutral fallback) --
+   the fixed dark text here only ever worked by coincidence in dark mode */
+.plus{display:inline!important;margin:0!important;font-size:var(--t6)!important;background:var(--p2);padding:0 3px}
 
 .perf{border-top:var(--rule-w) dashed var(--rule);margin-top:var(--s5)}
 .stubs{display:flex;gap:var(--s3);padding-top:var(--s4)}
@@ -664,7 +655,7 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
 <div id="toast"></div>
 
 <script>
-const KEY="eu26.pass",PKEY="eu26.plans",SKEY="eu26.spots",$=(s)=>document.querySelector(s);
+const KEY="eu26.pass",PKEY="eu26.plans",SKEY="eu26.spots",FKEY="eu26.fledits",$=(s)=>document.querySelector(s);
 const MONTH=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -774,7 +765,7 @@ async function open_(str){
 }
 
 let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false;
-let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
+let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},FLEDITS={},flEditing=null,pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const SECFIX={"Bars and Clubs":"Bars & Clubs","Food and Drink":"Food & Drink","History and Art":"History & Art","Nature and Beauty":"Nature & Beauty"};
 const fixSecs=()=>Object.keys(SPOTS).forEach((c)=>(SPOTS[c]||[]).forEach((sp)=>{ if(SECFIX[sp.sec]) sp.sec=SECFIX[sp.sec]; }));
@@ -782,10 +773,15 @@ const fixSecs=()=>Object.keys(SPOTS).forEach((c)=>(SPOTS[c]||[]).forEach((sp)=>{
 const loadPlans=()=>{
   try{PLANS=JSON.parse(localStorage.getItem(PKEY)||"{}")}catch{PLANS={}}
   try{SPOTS=JSON.parse(localStorage.getItem(SKEY)||"{}")}catch{SPOTS={}}
+  try{FLEDITS=JSON.parse(localStorage.getItem(FKEY)||"{}")}catch{FLEDITS={}}
   fixSecs();
 };
 const savePlans=()=>{try{localStorage.setItem(PKEY,JSON.stringify(PLANS))}catch{toast("Can't save here")}};
 const saveSpots=()=>{try{localStorage.setItem(SKEY,JSON.stringify(SPOTS))}catch{toast("Can't save here")}};
+const saveFledits=()=>{try{localStorage.setItem(FKEY,JSON.stringify(FLEDITS))}catch{toast("Can't save here")}};
+/* a flight has no id of its own; date + flight number together are stable
+   and unique across the whole trip, which a per-day array index is not */
+const flKey=(f)=>f.date+"|"+(f.number||f.airline||"");
 
 const CATMAP=[
   [/(night_?club|nightclub|\bpub\b|cocktail|brewery|\bbar\b|beer_|wine_bar|discoteca)/i,"Bars & Clubs"],
@@ -830,7 +826,9 @@ const OKEY="eu26.outbox";
 let OUT=new Set();
 try{ OUT=new Set(JSON.parse(localStorage.getItem(OKEY)||"[]")) }catch{}
 const saveOut=()=>{try{localStorage.setItem(OKEY,JSON.stringify([...OUT]))}catch{}};
-const payloadFor=(day)=>day.startsWith("spots:")?(SPOTS[day.slice(6)]||[]):(PLANS[day]||[]);
+const payloadFor=(day)=>day.startsWith("spots:")?(SPOTS[day.slice(6)]||[])
+  :day.startsWith("fledit:")?(FLEDITS[day.slice(7)]?[FLEDITS[day.slice(7)]]:[])
+  :(PLANS[day]||[]);
 
 let flushing=null;
 function flush(){
@@ -868,10 +866,11 @@ async function pull(){
       try{
         const l=await open_(row.payload);
         if(k.startsWith("spots:")){ const c=k.slice(6); if(l&&l.length)SPOTS[c]=l; else delete SPOTS[c]; }
+        else if(k.startsWith("fledit:")){ const fk=k.slice(7); if(l&&l.length)FLEDITS[fk]=l[0]; else delete FLEDITS[fk]; }
         else if(l&&l.length)PLANS[k]=l; else delete PLANS[k];
       }catch{}
     }
-    savePlans(); saveSpots();
+    savePlans(); saveSpots(); saveFledits();
     STATUS=OUT.size?"pending":"synced";
   }catch{ STATUS=OUT.size?"pending":"offline"; }
   paintStatus();
@@ -1071,6 +1070,13 @@ function inkOn(colors,pct){
    better against the WORST city colour in the trip, so no single day can
    flip out of step with its neighbours over a rounding difference. days
    coloured with the neutral (travel) are the deliberate exception. */
+/* the pop colour is fixed. same hex, every theme, no adjustment, ever. */
+function p1style(p1,p2){
+  return `--p1:${p1||"var(--fg)"};--p2:${p2||"var(--fg)"}`;
+}
+function acStyle(code){
+  return `--ac:${PORT[code]||"var(--fg)"}`;
+}
 function inkFor(palette,pct){
   const bgv=getComputedStyle(document.body).getPropertyValue("--bg").trim();
   const bg=hex2rgb(bgv.startsWith("#")?bgv:"#12150F");
@@ -1209,9 +1215,14 @@ function T(t){
   if(!m) return t;
   let h=+m[1]; const mi=m[2], ap=h>=12&&h<24?"pm":"am";
   h=h%12; if(h===0)h=12;
-  return h+":"+mi+" "+ap;
+  return h+":"+mi+ap;
 }
-const Trange=(str)=>String(str).replace(/(\d{1,2}:\d{2})/g,(m)=>T(m));
+/* a range always gets a spaced dash, in either clock format -- the source
+   data ("10:00-18:00") never has one, so this normalises it rather than
+   trusting whatever spacing happened to be scraped */
+const Trange=(str)=>String(str).replace(
+  /(\d{1,2}:\d{2})\s*[\u2013\u2014-]\s*(\d{1,2}:\d{2})/g,
+  (_,a,b)=>T(a)+" \u2013 "+T(b));
 const tC=(c)=>units==="C"?Math.round(c)+"\u00B0":Math.round(c*9/5+32)+"\u00B0";
 
 function geoFor(x){
@@ -1266,8 +1277,16 @@ function wxSummary(x){
   const w=WX[g.city+"|"+x.date];
   if(w===undefined||w===false||w==null) return "";
   const c=condIcon(w.code).t;
-  return w.pop>=25?`${c}, ${w.pop}%`:c;
+  const cond=w.pop>=25?`${c}, ${w.pop}%`:c;
+  /* only for the real, current day -- any other day just keeps the plain
+     condition, exactly as before */
+  if(x.date!==iso(new Date())||!w.hrs||!w.hrs.length) return cond;
+  const now=new Date();
+  const hhmm=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  const nearest=w.hrs.reduce((a,z)=>Math.abs(toMin(z.h)-toMin(hhmm))<Math.abs(toMin(a.h)-toMin(hhmm))?z:a);
+  return `${tC(nearest.temp)} ${cond}`;
 }
+const toMin=(hh)=>{const [h,m]=hh.split(":").map(Number); return h*60+m;};
 
 function condIcon(c){
   if(c==null) return {i:SUN,t:"Clear"};
@@ -1428,10 +1447,10 @@ function drawPlaces(){
         <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
         <div class="row2"><button class="cancel" id="s-cancel">Cancel</button><button class="save city" id="s-save" style="--pink:${inkOn([c.pop1||fgHex()],1)}">Add place</button></div>
       </div>`;})():`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
-    return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
+    return `<div style="${p1style(c.pop1,c.pop2)}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
   }).join("");
 
-  $("#screen").innerHTML=`<div style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">
+  $("#screen").innerHTML=`<div style="${p1style(x.p1,x.p2)}">
     ${body}
     ${tabs()}
   </div>`;
@@ -1632,13 +1651,13 @@ function drawDay(){
   const def=x.flights.length?"fl0":"plans";
   if(openPanel===undefined) openPanel=def;
   html+=checkoutCard(x);
-  x.flights.forEach((f,i)=>{html+=flightHero(f,i)});
+  x.flights.forEach((f,i)=>{html+=flightHero(f,i,x.p2)});
   (x.cars||[]).forEach((c,i)=>{html+=carCard(c,i)});
   if(x.arriving.length) html+=placeCard(x);
   html+=plansBlock(x);
 
   $("#screen").innerHTML=`
-    <div class="nav" style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">
+    <div class="nav" style="${p1style(x.p1,x.p2)}">
       <div class="navrow">
         <button class="arw" id="prev" ${cur===0?"disabled":""} aria-label="Previous day">&larr;</button>
         <button id="datebtn"><b>${DOW[t.getDay()]} ${t.getDate()} ${MON[t.getMonth()]}</b><span>${x.date<iso(new Date())?"DONE &middot; ":""}DAY ${cur+1} / ${DAYS.length}${wxSummary(x)?" &middot; "+esc(wxSummary(x)):""}</span></button>
@@ -1646,7 +1665,7 @@ function drawDay(){
       </div>
       <div class="wxrow">${weatherBox(x)}</div>
     </div>
-    <div class="${x.date<iso(new Date())?"past-day":""}" style="--p1:${x.p1||"var(--fg)"};--p2:${x.p2||"var(--fg)"}">${html}</div>`;
+    <div class="${x.date<iso(new Date())?"past-day":""}" style="${p1style(x.p1,x.p2)}">${html}</div>`;
 
   paintMast(x);
   $("#prev").addEventListener("click",()=>go(cur-1));
@@ -1667,6 +1686,20 @@ function drawDay(){
     draw();
   }));
   wirePlans(x);
+  $("#screen").querySelectorAll("[data-fledit]").forEach((b)=>b.addEventListener("click",()=>{
+    const k=b.dataset.fledit; flEditing=flEditing===k?null:k; draw();
+  }));
+  if($("#fle-cancel")) $("#fle-cancel").addEventListener("click",()=>{ flEditing=null; draw(); });
+  if($("#fle-save")) $("#fle-save").addEventListener("click",()=>{
+    const key=flEditing;
+    FLEDITS[key]={
+      terminal:$("#fle-term").value.trim(),
+      gate:$("#fle-gate").value.trim(),
+      seats:$("#fle-seats").value.trim(),
+      notes:$("#fle-notes").value.trim(),
+    };
+    saveFledits(); flEditing=null; draw(); push("fledit:"+key); toast("Saved");
+  });
   $("#screen").querySelectorAll(".code[data-copy]").forEach((el)=>el.addEventListener("click",async()=>{
     try{
       await navigator.clipboard.writeText(el.dataset.copy);
@@ -1678,26 +1711,49 @@ function drawDay(){
 
 
 
-const port=(code)=>`<a href="https://maps.google.com/?q=${encodeURIComponent(code+" airport")}" target="_blank" rel="noopener" style="--ac:${PORT[code]||"var(--fg)"}"><b>${esc(code)}</b></a>`;
+const port=(code)=>`<a href="https://maps.google.com/?q=${encodeURIComponent(code+" airport")}" target="_blank" rel="noopener" style="${acStyle(code)}"><b>${esc(code)}</b></a>`;
 
-function flightHero(f,idx){
+function flightHero(f,idx,dayP2){
   const seats="";
+  const key=flKey(f), ed=FLEDITS[key]||{};
+  const terminal=ed.terminal!=null?ed.terminal:(f.from.terminal||"");
+  const gate=ed.gate!=null?ed.gate:(f.from.gate||"");
+  const seatStr=ed.seats!=null?ed.seats:((f.seats&&f.seats.length)?f.seats.map((z)=>z.seat).join(" \u00b7 "):"");
+  /* the read-only view always keeps the airline's own notes and adds the
+     user's own note after them, rather than one replacing the other --
+     the editor's field only ever holds what the user actually typed, never
+     prefilled from the booking's text, so saving can't overwrite it */
+  const noteList=[...(f.notes||[]),...(ed.notes?[ed.notes]:[])];
   const stub=(lbl,val)=>`<span class="stub"><em>${esc(lbl)}</em><b>${val||"TBD"}</b></span>`;
+  const badgeBg=PORT[f.to.code]||dayP2||fgHex();
   const body=`<div class="leg">
       <div class="end">${port(f.from.code)}<span class="t">${esc(T(f.from.time))}</span></div>
       <div class="mid"><span class="air">${esc(f.airline)} ${esc(f.number)}</span><i></i><span class="dur">${esc(f.duration)}</span></div>
-      <div class="end to">${port(f.to.code)}<span class="t">${esc(T(f.to.time))}${f.to.arrivesNextDay?` <em class="plus" style="background:${PORT[f.to.code]||"var(--p2)"}">+1</em>`:""}</span></div>
+      <div class="end to">${port(f.to.code)}<span class="t">${esc(T(f.to.time))}${f.to.arrivesNextDay?` <em class="plus" style="background:${badgeBg};color:${inkOn([badgeBg],1)}">+1</em>`:""}</span></div>
     </div>
     <div class="perf"></div>
     <div class="stubs">
-      ${stub("Terminal",esc(f.from.terminal||"\u2013"))}
-      ${stub("Gate",f.from.gate?esc(f.from.gate):"")}
-      ${stub("Seats",(f.seats&&f.seats.length)?f.seats.map((z)=>esc(z.seat)).join(" \u00b7 "):"")}
+      ${stub("Terminal",esc(terminal||"\u2013"))}
+      ${stub("Gate",gate?esc(gate):"")}
+      ${stub("Seats",esc(seatStr))}
     </div>
 
     <div class="codes">${(f.codes||[]).map((c)=>`<button class="code" data-copy="${esc(c.value)}"><span class="l">${esc(c.label)}</span><span class="v">${esc(c.value)}</span></button>`).join("")}${seats}</div>
-    ${notes(f.notes)}`;
-  return panel("fl"+idx,"Flight",`${esc(f.from.code)} &rarr; ${esc(f.to.code)} &middot; ${esc(T(f.from.time))}`,body);
+    ${notes(noteList)}
+    ${flEditing===key?flightEditor(f,key,terminal,gate,seatStr,ed.notes||""):""}`;
+  return panel("fl"+idx,"Flight",`${esc(f.from.code)} &rarr; ${esc(f.to.code)} &middot; ${esc(T(f.from.time))}`,body,
+    {tail:`<button class="hbtn" data-fledit="${esc(key)}" aria-label="Edit flight details">${PENCIL}</button>`});
+}
+
+function flightEditor(f,key,terminal,gate,seatStr,noteStr){
+  return `<div class="form">
+    <div class="fld"><span class="k">Terminal</span><input id="fle-term" value="${esc(terminal)}" placeholder="Terminal" autocomplete="off"></div>
+    <div class="fld"><span class="k">Gate</span><input id="fle-gate" value="${esc(gate)}" placeholder="Gate" autocomplete="off"></div>
+    <div class="fld"><span class="k">Seats</span><input id="fle-seats" value="${esc(seatStr)}" placeholder="e.g. 14A, 14B" autocomplete="off"></div>
+    <div class="fld"><span class="k">Add a note</span><textarea id="fle-notes" rows="2" placeholder="e.g. gate changed at the counter" autocomplete="off">${esc(noteStr)}</textarea></div>
+    <button class="save" id="fle-save">Save</button>
+    <button class="cancel" id="fle-cancel">Cancel</button>
+  </div>`;
 }
 
 function byeLine(x){
@@ -2045,7 +2101,7 @@ function routeUrl(x){
   if(!g.length) return "";
   const pt=(p)=>`${p.lat},${p.lng}`;
   const dest=g[g.length-1], mids=g.slice(0,-1);
-  let u=`https://www.google.com/maps/dir/?api=1&destination=${pt(dest)}&travelmode=walking`;
+  let u=`https://www.google.com/maps/dir/?api=1&destination=${pt(dest)}&travelmode=${hasCar(x.date)?"driving":"walking"}`;
   if(ME) u+=`&origin=${ME.lat},${ME.lng}`;
   if(mids.length) u+=`&waypoints=${mids.map(pt).join("|")}`;
   return u;
@@ -2282,7 +2338,7 @@ function wireDrag(x){
   if(rows.length<2) return;
   rows.forEach((row)=>{
     const h=row.querySelector('[data-dragh]'); if(!h) return;
-    let dragging=false,startY=0,curOrder=rows.map((r)=>+r.id.slice(5)),homeY=0;
+    let dragging=false,dragged=false,startY=0,curOrder=rows.map((r)=>+r.id.slice(5)),homeY=0;
     const H=row.offsetHeight;
     const others=()=>rows.filter((r)=>r!==row);
     const settle=()=>{
@@ -2290,23 +2346,27 @@ function wireDrag(x){
       dragging=false;
       setTimeout(()=>rows.forEach((r)=>{ r.style.transition=''; }),180);
     };
+    h.addEventListener('click',(e)=>{
+      if(dragged){ e.stopImmediatePropagation(); e.preventDefault(); dragged=false; }
+    },true);
     h.addEventListener('pointerdown',(e)=>{
       e.preventDefault();
-      dragging=true; startY=e.clientY; homeY=row.getBoundingClientRect().top;
+      dragging=true; dragged=false; startY=e.clientY; homeY=row.getBoundingClientRect().top;
       row.classList.add('drag'); row.style.zIndex=20; row.style.transition='';
       try{ h.setPointerCapture(e.pointerId); }catch{}
     });
     h.addEventListener('pointermove',(e)=>{
       if(!dragging) return;
       const dy=e.clientY-startY;
+      if(Math.abs(dy)>4) dragged=true;
       row.style.transform=`translateY(${dy}px)`;
       const myIdx=curOrder.indexOf(+row.id.slice(5));
       others().forEach((o)=>{
         const oIdx=curOrder.indexOf(+o.id.slice(5));
         const oHome=rows.indexOf(o)*H;
         const dragCenter=rows.indexOf(row)*H+dy+H/2;
-        const shouldShiftUp = oIdx>myIdx && dragCenter < oHome+H/2;
-        const shouldShiftDown = oIdx<myIdx && dragCenter > oHome+H/2;
+        const shouldShiftUp = oIdx>myIdx && dragCenter > oHome+H/2;
+        const shouldShiftDown = oIdx<myIdx && dragCenter < oHome+H/2;
         if(shouldShiftUp){ o.style.transform=`translateY(${-H}px)`; }
         else if(shouldShiftDown){ o.style.transform=`translateY(${H}px)`; }
         else{ o.style.transform=''; }
@@ -2319,7 +2379,7 @@ function wireDrag(x){
       const shiftedDown=others().filter((o)=>{const m=o.style.transform.match(/\d+/); return m&&+m[0]===H&&!o.style.transform.includes('-');}).length;
       const from=+row.id.slice(5);
       const origPos=rows.indexOf(row);
-      let newPos=origPos+shiftedDown-shiftedUp;
+      let newPos=origPos+shiftedUp-shiftedDown;
       newPos=Math.max(0,Math.min(rows.length-1,newPos));
       row.classList.remove('drag'); row.style.zIndex='';
       settle();

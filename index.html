@@ -33,7 +33,7 @@
   /* colour: ink for all type, borders, controls.
      fill for the one primary action in a view.
      accent for identity only. red only inside a swipe drawer. */
-  --bg:#12150F; --fg:#F0E9D8; --mute:#8A8878; --wash:#1C201A; --edge:#F0E9D8;
+  --bg:#12150F; --fg:#F0E9D8; --mute:#8A8878; --wash:#2B3226; --edge:#F0E9D8;
   --p1:#F0E9D8; --p2:#F0E9D8;
   --red:#FF6B60; --red-fill:#C8402F;
   --rule:color-mix(in srgb,var(--edge) 34%,transparent);
@@ -66,12 +66,13 @@
   --sa-w:56px;
 }
 html.light,body.light{
-  --bg:#F0E9D8; --fg:#16190F; --mute:#696758; --wash:#E4DBC6;
+  --bg:#F0E9D8; --fg:#16190F; --mute:#696758; --wash:#D8CDB2;
   --edge:#16190F; --p1:#16190F; --p2:#16190F;
 }
 /* the city colours are picked for a dark ground. on cream they vanish,
    so blend them toward the ink: same hue, readable at display size. */
-body.light .mast b{color:color-mix(in srgb,var(--mc,var(--fg)) 55%,var(--fg))}
+body.light .mast #mastcity{color:color-mix(in srgb,var(--mc,var(--fg)) 55%,var(--fg))}
+body.light .pnl.open>.ph .lbl,
 body.light .pnl>.ph .lbl.city{color:color-mix(in srgb,var(--p1) 55%,var(--fg))}
 body.light .leg a b{color:color-mix(in srgb,var(--ac,var(--fg)) 55%,var(--fg))}
 
@@ -118,14 +119,14 @@ svg.i{
 
 /* hit targets */
 .mast .grp>*{width:var(--hit-sm);height:var(--hit-sm);flex:0 0 var(--hit-sm)}
-.hbtn,.lk,.goq,.grip,.cback{
+.hbtn,.lk,.grip,.cback{
   width:var(--hit-md);height:var(--hit-md);flex:0 0 var(--hit-md);
 }
 .nav .arw,.ico{width:var(--hit-lg);height:var(--hit-lg);flex:0 0 var(--hit-lg)}
 
 /* THE CIRCLE. every control in the app is one of these: same ring, same
    centring, three diameters off the hit scale. nothing is a square. */
-.mast .grp>*,.hbtn,.nav .arw,.ico,.cback,.lk,.goq,.grip{
+.mast .grp>*,.hbtn,.nav .arw,.ico,.cback,.lk,.grip{
   border:var(--edge-w) solid var(--edge);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   color:var(--fg);padding:0;text-decoration:none;line-height:1;
@@ -135,6 +136,8 @@ svg.i{
 .mast .grp>*,.hbtn,.cback,.nav .arw{
   font-family:var(--mn);font-size:var(--t5);font-weight:400;
 }
+/* a single wide glyph reads smaller than two narrow ones at the same size */
+#fx{font-size:var(--t4)}
 .lbl{
   font-family:var(--mn);font-size:var(--t6);font-weight:700;
   letter-spacing:var(--ls-lbl);text-transform:uppercase;
@@ -150,7 +153,7 @@ svg.i{
 .flag.xx{background:repeating-linear-gradient(45deg,var(--fg) 0 4px,var(--bg) 4px 8px)}
 
 /* the filled button: one per view */
-#unlock,.bigadd,.form .save,.picker .save{
+#unlock,.form .save,.picker .save{
   width:100%;background:var(--fg);color:var(--bg);
   padding:var(--s5);text-align:center;
   font-weight:800;font-stretch:var(--wider);font-size:var(--t5);
@@ -189,13 +192,14 @@ svg.i{
   display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
   padding:var(--s6) 0 var(--s4);border-bottom:var(--edge-w) solid var(--edge);
 }
-.mast b{
+.mast #mastcity{
   flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:var(--s2) 0;margin:calc(var(--s2) * -1) 0;
   font-size:var(--t1);font-weight:800;font-stretch:var(--widest);
   letter-spacing:var(--tight);text-transform:uppercase;line-height:1;
   color:var(--mc,var(--fg));
 }
-.mast b.long{font-size:var(--t2)}
+#mastcity.long{font-size:var(--t2)}
 .mast .grp{
   flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);line-height:1;
   font-family:var(--mn);font-size:var(--t6);color:var(--mute);
@@ -205,9 +209,17 @@ svg.i{
 #invert{background:linear-gradient(90deg,var(--fg) 0 50%,var(--bg) 50%)}
 
 .fxpanel{border:var(--edge-w) solid var(--edge);border-top:0;padding:var(--s4) var(--pad)}
-.fxrow{display:flex;align-items:center;gap:var(--s2)}
-.fxrow input{flex:1 1 0;text-align:right;font-size:var(--t4);padding:var(--s3)}
-.fxrow span{font-family:var(--mn);font-size:var(--t6);color:var(--mute);width:var(--hit-sm)}
+.fxrow{display:flex;align-items:stretch;gap:var(--s3)}
+.fxfld{
+  flex:1 1 0;min-width:0;display:flex;align-items:center;gap:var(--s2);
+  background:var(--wash);border:var(--edge-w) solid var(--edge);padding:0 var(--s3);
+}
+.fxfld span{flex:0 0 auto;font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
+.fxfld input{
+  flex:1 1 auto;min-width:0;width:100%;
+  background:none;border:0;padding:var(--s3) 0;
+  text-align:right;font-size:var(--t4);
+}
 .fxrate{
   font-family:var(--mn);font-size:var(--t6);color:var(--mute);
   margin-top:var(--s3);letter-spacing:var(--ls-cap);
@@ -350,7 +362,8 @@ svg.i{
   font-family:var(--dp);font-size:var(--t3);font-weight:800;font-stretch:var(--widest);
   letter-spacing:var(--tight);text-transform:uppercase;color:var(--fg);line-height:1;
 }
-.pnl>.ph .lbl.city{color:var(--p1)}
+/* whichever panel is open takes the colour of the city you are in */
+.pnl.open>.ph .lbl,.pnl>.ph .lbl.city{color:var(--p1)}
 .pnl>.ph .meta{display:flex;align-items:center;font-family:var(--mn);font-size:var(--t6);color:var(--mute);white-space:nowrap}
 .pnl>.pb{padding:0 var(--pad) var(--s5)}
 .pnl.open>.pb{padding-top:0}
@@ -390,10 +403,11 @@ svg.i{
 .code.done{background:var(--mute);border-color:var(--mute);color:#12150F}
 .code.done .l{color:rgba(0,0,0,.55)}
 
-.hotel{font-size:var(--t1);font-weight:800;font-stretch:var(--widest);text-transform:uppercase;letter-spacing:var(--tight);line-height:1;color:var(--fg);margin-top:var(--s3)}
+.hotel{margin-top:var(--s4);font-size:var(--t1);font-weight:800;font-stretch:var(--widest);text-transform:uppercase;letter-spacing:var(--tight);line-height:1;color:var(--fg)}
 .sub{font-family:var(--mn);font-size:var(--t6);color:var(--mute);margin-top:var(--s1);text-transform:uppercase}
 .checkin{font-family:var(--mn);font-size:var(--t6);color:var(--fg);margin-top:var(--s3);letter-spacing:var(--ls-cap)}
 .leave{
+  margin-top:var(--s4);
   font-family:var(--mn);font-size:var(--t6);color:var(--mute);
   text-transform:uppercase;letter-spacing:var(--ls-cap);
   padding-bottom:var(--s3);margin-bottom:var(--s3);
@@ -454,6 +468,13 @@ svg.i{
 }
 .rtype{margin-top:var(--s1);font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
 .pmeta{margin-top:var(--s1);font-family:var(--mn);font-size:var(--t6);color:var(--mute);line-height:1.5}
+/* shown on every row while sorting by distance, so the list reads down in
+   one pass. brighter than the meta around it because it is the sort key. */
+.rdist{
+  display:block;margin-bottom:var(--s1);padding:0;text-align:left;
+  font-family:var(--mn);font-size:var(--t6);font-weight:700;color:var(--fg);
+}
+button.rdist{text-decoration:underline;text-underline-offset:3px}
 .rwin{flex:0 0 auto;font-style:normal;font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
 .rwin.shut,.shut{font-style:normal;color:var(--red)}
 .swipe.shut .rname b,.optwrap.shut .rname b{opacity:.5}
@@ -463,8 +484,8 @@ svg.i{
 .swipe.arch .plan,.spot.gone{opacity:.45}
 .swipe.arch .rname b,.spot.gone .rname b{text-decoration:line-through}
 
-.lk,.goq,.grip{border-color:var(--mute)}
-.goq,.grip{color:var(--mute)}
+.lk,.grip{border-color:var(--mute)}
+.grip{color:var(--mute)}
 .swipe.open .grip{color:var(--fg)}
 
 .far{
@@ -487,23 +508,31 @@ svg.i{
 .ptime.tbd span{color:var(--mute)}
 .ptime.tbd i{opacity:.28}
 
-.bigadd{margin-top:var(--s3)}
+/* the one action on the page, so it is the one thing wearing the city
+   colour. a centred plus in a circle, same family as every other control. */
+.bigadd{
+  display:flex;align-items:center;justify-content:center;
+  width:56px;height:56px;margin:var(--s5) auto var(--s1);padding:0;
+  border:0;border-radius:50%;
+  background:var(--p1);color:var(--pink,var(--bg));
+  font-family:var(--mn);font-size:var(--t1);font-weight:400;line-height:1;
+}
 .empty{font-family:var(--mn);font-size:var(--t6);color:var(--mute);padding:var(--s4) 0 var(--s1)}
 
 
-.trav{display:flex;gap:var(--s2);margin:var(--s0) 0 var(--s4)}
+.trav{display:flex;gap:var(--s2);margin:var(--s4) 0 var(--s1)}
 .trav a{
   flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:var(--s2);
   font-family:var(--mn);font-size:var(--t6);text-decoration:none;color:var(--fg);
-  border:var(--edge-w) solid var(--mute);padding:var(--s3) var(--s2);white-space:nowrap;
+  border:var(--edge-w) solid var(--mute);padding:var(--s3) var(--s1);white-space:nowrap;
+  min-width:0;overflow:hidden;text-overflow:ellipsis;
 }
 
 /* 12 ── PICKER ────────────────────────────────────────────── */
 .picker{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s4);padding-top:var(--s4)}
-/* the arrow sits with the field, so the category title lands exactly where
-   the category row's title was and nothing drifts sideways */
-.pkq{display:flex;align-items:center;gap:var(--s2)}
-.pkq input{flex:1 1 auto;min-width:0}
+/* the search field holds a pasted URL, so it is sized to fit a line of it
+   rather than to match the display type around it */
+.picker input,#s-paste{font-size:var(--t5)}
 .picker .opts{padding-top:var(--s0)}
 .picker .chips.sec{display:flex;flex-wrap:wrap;gap:var(--s1);padding:0;border:0}
 .picker .chips.sec button{
@@ -514,12 +543,10 @@ svg.i{
 .picker .chips.sec button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
 .optwrap{position:relative}
-.optwrap .opt{padding-right:48px}
 .optwrap:last-child .opt{border-bottom:0}
 .opt{display:block;width:100%;padding:var(--s4) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
 .opt span{display:block;font-family:var(--mn);font-size:var(--t6);color:var(--mute);margin-top:var(--s1);line-height:1.5}
 .opt.dim{opacity:.45}
-.opt-go{position:absolute;right:0;top:var(--s4)}
 
 .cats{display:flex;flex-direction:column}
 .cat{display:flex;align-items:center;gap:var(--gap);width:100%;padding:var(--s5) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
@@ -537,8 +564,20 @@ svg.i{
   font-family:var(--mn);font-size:var(--t6);font-weight:700;
   letter-spacing:var(--ls-lbl);text-transform:uppercase;color:var(--mute);
 }
-.fld .two,.picker .two{display:flex;align-items:center;gap:var(--s2)}
-.fld .two span,.picker .two span{font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
+/* a time is eight characters wide, so its box is too. the note gets the
+   room instead, because that is the field with something to say. */
+.fld .two,.picker .two{display:flex;align-items:center;gap:var(--s3)}
+.fld .two span,.picker .two span{flex:0 0 auto;font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
+.fld .two input[type=time]{
+  flex:1 1 0;width:auto;min-width:0;
+  padding:var(--s3);text-align:center;font-size:var(--t5);
+}
+.form textarea{
+  display:block;width:100%;resize:vertical;
+  min-height:76px;padding:var(--s4);border-radius:0;
+  font-family:var(--mn);font-size:var(--t4);line-height:1.5;
+  background:var(--wash);color:var(--fg);border:var(--edge-w) solid var(--edge);
+}
 .form .row2{display:flex;gap:var(--s2)}
 .form .cancel,.form .kill{flex:1 1 auto}
 
@@ -547,7 +586,8 @@ svg.i{
   display:flex;align-items:center;gap:var(--gap);width:100%;
   padding:var(--s4) 0;text-align:left;border-top:var(--rule-w) solid var(--rule);
 }
-.pgh:first-child{border-top:0}
+/* the first section clears the panel header instead of butting into it */
+.pgh:first-child{border-top:0;padding-top:var(--s5)}
 .pgh .l{
   flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   font-family:var(--dp);font-size:var(--t4);font-weight:800;font-stretch:var(--wider);
@@ -556,14 +596,6 @@ svg.i{
 .pgh .n{flex:0 0 auto;font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
 .pgh.on .l{color:var(--fg)}
 
-.locbar{
-  display:flex;align-items:center;justify-content:center;width:100%;
-  padding:var(--s4) var(--pad);border:var(--edge-w) solid var(--edge);border-top:0;
-  font-family:var(--mn);font-size:var(--t6);letter-spacing:var(--ls-lbl);
-  text-transform:uppercase;color:var(--mute);
-}
-.locbar.on{color:var(--fg);border-color:var(--fg)}
-.picker .locbar{border:var(--edge-w) solid var(--mute);margin:0}
 
 .seenbar{
   width:100%;padding:var(--s4) 0 var(--s1);margin-top:var(--s1);
@@ -760,7 +792,8 @@ function parseSpot(text){
   const m=url.match(/\/maps\/place\/([^\/@?]+)/);
   if(m){ try{ name=decodeURIComponent(m[1].replace(/\+/g," ")); }catch{ name=m[1].replace(/\+/g," "); } }
   if(!name){
-    const lines=text.split(/\n+/).map((l)=>l.trim()).filter((l)=>l&&!/^https?:/i.test(l));
+    const lines=text.replace(/https?:\/\/\S+/g,"\n").split(/\n+/)
+      .map((l)=>l.trim()).filter(Boolean);
     if(lines.length) name=lines[0];
   }
   name=name.replace(/\s*[·|]\s*[\d.]+\s*★.*$/,"").replace(/^["'“]|["'”]$/g,"").trim();
@@ -889,7 +922,7 @@ function start(trip){
   const i=DAYS.findIndex((x)=>x.date===today);
   cur=i>=0?i:(today>TRIP.meta.end?DAYS.length-1:0);
   $("#app").innerHTML=`
-    <div class="mast"><b id="mastcity">Europe 2026</b>
+    <div class="mast"><button id="mastcity" aria-label="Month view">Europe 2026</button>
       <span class="grp"><a id="home" aria-label="Hotel">${HOME}</a><button id="clk" aria-label="Time format">${CLOCK}</button><button id="units" aria-label="Temperature units">${units==="C"?"\u00B0C":"\u00B0F"}</button><button id="fx" aria-label="Currency">&euro;</button><button id="invert" aria-label="Invert colours"></button></span></div>
     <div id="fxbox"></div>
     <div id="screen"></div>
@@ -929,6 +962,7 @@ function start(trip){
   $("#fx").addEventListener("click",()=>{
     fxOpen=!fxOpen; $("#fx").classList.toggle("on",fxOpen); drawFx();
   });
+  $("#mastcity").addEventListener("click",()=>{ view="cal"; calTab="cal"; draw(); });
   $("#invert").addEventListener("click",()=>{
     const on=!document.body.classList.contains("light");
     setTheme(on);
@@ -1085,6 +1119,16 @@ const hasCar=(date)=>(TRIP&&TRIP.cars||[]).some((c)=>
 const nearMin=(date,k)=>hasCar(date)?driveMin(k):walkMin(k);
 const nearWord=(date)=>hasCar(date)?"drive":"walk";
 
+const dur=(m)=>m<90?`${m} min`:(m<1440?`${Math.round(m/60)} h`:`${Math.round(m/1440)} d`);
+
+/* the one line that lets you compare rows by eye when sorted by distance */
+function distLine(sp){
+  if(!ME||sp.lat==null) return "";
+  const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
+  const drive=k>2;
+  return `${fmtKm(k)} &middot; ${dur(drive?driveMin(k):walkMin(k))} ${drive?"drive":"walk"}`;
+}
+
 function far(sp){
   if(!ME||sp.lat==null) return "";
   const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
@@ -1238,8 +1282,10 @@ function drawFx(){
   if(!FX){ el.innerHTML=`<div class="fxpanel"><p class="fxrate">Fetching rates</p></div>`; getFX(); return; }
   const rate=FX[code]||1;
   el.innerHTML=`<div class="fxpanel">
-    <div class="fxrow"><span>${esc(code)}</span><input id="fx-loc" inputmode="decimal" value="10"><span>${esc(CUR[code]||code)}</span></div>
-    <div class="fxrow" style="margin-top:6px"><span>USD</span><input id="fx-usd" inputmode="decimal" value="${(10/rate).toFixed(2)}"><span>${esc(CUR.USD)}</span></div>
+    <div class="fxrow">
+      <label class="fxfld"><span>${esc(code)}</span><input id="fx-loc" inputmode="decimal" value="10"></label>
+      <label class="fxfld"><span>USD</span><input id="fx-usd" inputmode="decimal" value="${(10/rate).toFixed(2)}"></label>
+    </div>
     <p class="fxrate">1 ${esc(code)} = ${(1/rate).toFixed(3)} USD &middot; updated daily</p>
   </div>`;
   const u=$("#fx-usd"), l=$("#fx-loc");
@@ -1292,7 +1338,10 @@ function placeRow(sp,i,city,date,hidden){
       <button class="sa del" data-sw-sdel="${esc(city)}|${i}" aria-label="Remove">${XMARK}</button>
     </div>
     <div class="swipe-body"><div class="spot${hidden?" gone":""}">
-      ${rowHead(sp,date,links(sp)+`<button class="grip" data-grip aria-label="Actions">${GRIP}</button>`,infoLine(sp,date)).html}
+      ${rowHead(sp,date,links(sp)+`<button class="grip" data-grip aria-label="Actions">${GRIP}</button>`,
+        (sortMode==="KM"&&distLine(sp)?`<button class="rdist" data-travplace="${esc(city)}|${i}">${distLine(sp)}</button>`:"")
+        +infoLine(sp,date)).html}
+      ${travOpen==="p"+city+"|"+i?travelRow(sp):""}
     </div></div></div>`;
 }
 
@@ -1310,7 +1359,7 @@ function drawPlaces(){
     const parsed=adding?parseSpot(pasteText):{sec:null};
     const inner=`
       ${live.length?SECTIONS.map((sec)=>{
-        const items=sortList(live.filter(({sp})=>sp.sec===sec),(o)=>o.sp);
+        const items=sortList(live.filter(({sp})=>sp.sec===sec),(o)=>o.sp,false);
         if(!items.length) return "";
         const k=c.city+"|"+sec, open=openSec.has(k);
         return `<button class="pgh${open?" on":""}" data-pgh="${esc(k)}"><span class="l">${esc(sec)}</span><span class="n">${items.length}</span></button>
@@ -1319,16 +1368,15 @@ function drawPlaces(){
       ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
         ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
       ${adding?`<div class="picker">
-        <input id="s-paste" value="${esc(pasteText)}" placeholder="Paste a Google Maps link, or type a name" autocomplete="off" autocorrect="off" spellcheck="false">
+        <input id="s-paste" value="${esc(pasteText)}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
         <div class="chips sec">${SECTIONS.map((k)=>`<button class="${(pick&&pick.sec||parsed.sec||SECTIONS[1])===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
         <button class="save" id="s-save">Add to ${esc(c.city)}</button>
         <button class="cancel" id="s-cancel">Cancel</button>
       </div>`:`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
-    return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1})}</div>`;
+    return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
   }).join("");
 
   $("#screen").innerHTML=`<div style="--p1:${x.p1};--p2:${x.p2}">
-    <button class="locbar${sortMode==="KM"?" on":""}" data-sort="${sortMode==="KM"?"123":"KM"}">${LOC}${ME?"Distances on &middot; tap to refresh":"Show how far things are"}</button>
     ${body}
     ${tabs()}
   </div>`;
@@ -1349,6 +1397,11 @@ function drawPlaces(){
   }));
   $("#screen").querySelectorAll("[data-seen]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.seen; seenOpen.has(k)?seenOpen.delete(k):seenOpen.add(k); draw();
+  }));
+  $("#screen").querySelectorAll("[data-travplace]").forEach((b)=>b.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    const k="p"+b.dataset.travplace;
+    travOpen=travOpen===k?null:k; draw();
   }));
   $("#screen").querySelectorAll("[data-pgh]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.pgh;
@@ -1542,7 +1595,7 @@ function drawDay(){
   $("#screen").querySelectorAll("[data-pnl]").forEach((b)=>b.addEventListener("click",()=>{
     const k=b.dataset.pnl;
     openPanel=openPanel===k?null:k;
-    if(k!=="plans")editing=null;
+    if(k!=="plans"||!openPanel){ editing=null; pick=null; }
     if(!k.startsWith("sec:"))pasting=null;
     drawDay();
   }));
@@ -1604,7 +1657,7 @@ function stayBody(s,arriving){
     <div class="low">
       <span class="who">${esc(s.address||"")}</span>
       ${s.address?`<a class="ico" href="https://maps.google.com/?q=${encodeURIComponent(s.name+", "+s.address)}" target="_blank" rel="noopener" aria-label="Open in Maps">${PIN}</a>`:""}
-      ${s.phone?`<a class="ico" href="tel:${esc(s.phone)}" aria-label="Call">${TEL}</a>`:""}
+      ${s.phone?`<a class="ico" href="tel:${esc(s.phone)}" aria-label="Call ${esc(s.name)}">${TEL}</a>`:""}
     </div>
     ${arriving?notes(s.notes):""}`;
 }
@@ -1634,7 +1687,7 @@ function checkoutCard(x){
      <div class="low">
        <span class="who">${esc(out.address||"")}</span>
        ${out.address?`<a class="ico" href="https://maps.google.com/?q=${encodeURIComponent(out.name+", "+out.address)}" target="_blank" rel="noopener" aria-label="Open in Maps">${PIN}</a>`:""}
-       ${out.phone?`<a class="ico" href="tel:${esc(out.phone)}" aria-label="Call">${TEL}</a>`:""}
+       ${out.phone?`<a class="ico" href="tel:${esc(out.phone)}" aria-label="Call ${esc(out.name)}">${TEL}</a>`:""}
      </div>`);
 }
 
@@ -1664,22 +1717,22 @@ function travelRow(sp){
   if(sp.lat==null||!ME) return "";
   const k=km(ME.lat,ME.lng,sp.lat,sp.lng);
   const dir=(m)=>`https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}&travelmode=${m}`;
+  const w=walkMin(k);
   return `<div class="trav">
-    <a href="${dir("walking")}" target="_blank" rel="noopener">${WALK}${walkMin(k)} min</a>
+    ${w<=120?`<a href="${dir("walking")}" target="_blank" rel="noopener">${WALK}${dur(w)}</a>`:""}
     <a href="${dir("transit")}" target="_blank" rel="noopener">${RAIL}Transit</a>
-    <a href="${dir("driving")}" target="_blank" rel="noopener">${CAR}${driveMin(k)} min</a>
+    <a href="${dir("driving")}" target="_blank" rel="noopener">${CAR}${dur(driveMin(k))}</a>
   </div>`;
 }
 
 function links(sp){
-  const out=[];
-  const dest=sp.lat!=null?`https://www.google.com/maps/dir/?api=1&destination=${sp.lat},${sp.lng}`:sp.url;
-  if(dest) out.push(`<a class="lk" href="${esc(dest)}" target="_blank" rel="noopener" aria-label="Map">${PIN}</a>`);
-  const wq=sp.web||("https://www.google.com/search?q="+encodeURIComponent((sp.where||sp.name||"")+" "+(sp.cityHint||DAYS[cur].city||"")));
-  const ig=/instagram\.com/.test(sp.web||"");
-  if(sp.where||sp.name) out.push(`<a class="lk" href="${esc(wq)}" target="_blank" rel="noopener" aria-label="${ig?"Instagram":sp.web?"Website":"Search"}">${ig?INSTA:GLOBE}</a>`);
-  if(sp.phone) out.push(`<a class="lk" href="tel:${esc(sp.phone)}" aria-label="Call">${TEL}</a>`);
-  return out.join("");
+  const name=(sp.where||sp.name||"").trim();
+  const city=sp.cityHint||(DAYS[cur]||{}).city||"";
+  let url="";
+  if(sp.url&&/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(sp.url)) url=sp.url;
+  else if(name) url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name+(city?", "+city:""));
+  else if(sp.lat!=null) url=`https://www.google.com/maps/search/?api=1&query=${sp.lat},${sp.lng}`;
+  return url?`<a class="lk" href="${esc(url)}" target="_blank" rel="noopener" aria-label="Open in Maps">${PIN}</a>`:"";
 }
 
 function plannedToday(date){
@@ -1765,9 +1818,10 @@ function planRow(p0,i,date){
   const p=enrich(p0,(DAYS[cur]||{}).city||"");
   const t=p.time?(p.end?`${esc(T(p.time))} &ndash; ${esc(T(p.end))}`:esc(T(p.time))):"";
   const head=p.where||p.what||"Plan";
-  const acts=links(p)+((ME&&p.lat!=null)?`<button class="goq" data-trav="${i}">${NEAR}</button>`:"")
+  const acts=links(p)
     +(editing===i?"":`<button class="grip" data-grip data-dragh="${i}" aria-label="Actions, drag to reorder">${GRIP}</button>`);
-  const sub=infoLine(p,date);
+  const d=sortMode==="KM"?distLine(p):"";
+  const sub=(d?`<button class="rdist" data-trav="${i}">${d}</button>`:"")+infoLine(p,date);
   const hd=rowHead({...p,name:head},date,acts,sub);
   return `<div class="swipe${p.done?" arch":""}${hd.shut?" shut":""}" id="plan-${i}">
     <div class="swipe-actions">
@@ -1799,14 +1853,13 @@ function picker(x){
 
   const row=(o,dim)=>`<div class="optwrap${openNow(o.sp,x.date)&&!openNow(o.sp,x.date).open?" shut":""}">
       <button class="opt${dim?" dim":""}" data-pickspot="${o.i}">
-        ${rowHead(o.sp,x.date,"",infoLine(o.sp,x.date)+(dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):"")).html}
+        ${rowHead(o.sp,x.date,"",(sortMode==="KM"&&distLine(o.sp)?`<span class="rdist">${distLine(o.sp)}</span>`:"")+infoLine(o.sp,x.date)+(dim?" &middot; planned "+esc(fmtShort(done[key(o.sp)])):"")).html}
       </button>
-      ${(ME&&o.sp.lat!=null)?`<button class="goq opt-go" data-travspot="${o.i}">${NEAR}</button>`:""}
       ${travOpen==="s"+o.i?travelRow(o.sp):""}
     </div>`;
 
   const listOf=(arr)=>{
-    const a=sortList(arr,(o)=>o.sp);
+    const a=sortList(arr,(o)=>o.sp,false);
     const fresh=a.filter(({sp})=>!done[key(sp)]);
     const used=a.filter(({sp})=>done[key(sp)]);
     return fresh.map((o)=>row(o)).join("")+used.map((o)=>row(o,true)).join("");
@@ -1840,11 +1893,8 @@ function picker(x){
   }
 
   return `<div class="picker">
-    <div class="pkq">
-      ${pick.cat?`<button class="cback" id="pk-back" aria-label="Back to categories">&larr;</button>`:""}
-      <input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search, type a new one, or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
-    </div>
     ${body}
+    <input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
     <button class="cancel" id="pk-cancel">Cancel</button>
   </div>`;
 }
@@ -1854,7 +1904,7 @@ function planEditor(p,i){
     <div class="fld"><span class="k">When</span><div class="two">
       <input id="e-time" type="time" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="time" value="${esc(p.end||"")}">
     </div></div>
-    <div class="fld"><span class="k">Note</span><input id="e-note" value="${esc(p.note||"")}" placeholder="Optional" autocomplete="off"></div>
+    <div class="fld"><span class="k">Note</span><textarea id="e-note" rows="3" placeholder="Optional" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
     <button class="save" id="e-save">Save</button>
     <div class="row2"><button class="cancel" id="e-cancel">Cancel</button><button class="kill" id="e-kill">Delete</button></div>
   </div>`;
@@ -1863,23 +1913,30 @@ function planEditor(p,i){
 const distOf=(o)=>(ME&&o.lat!=null)?km(ME.lat,ME.lng,o.lat,o.lng):Infinity;
 const nameOf=(o)=>(o.where||o.name||"").toLowerCase();
 
-function sortList(arr,getter){
-  const a=arr.slice();
-  if(sortMode==="ABC") a.sort((x,y)=>nameOf(getter(x)).localeCompare(nameOf(getter(y))));
-  else if(sortMode==="KM") a.sort((x,y)=>distOf(getter(x))-distOf(getter(y)));
+function sortList(arr,getter,withTime){
+  const m=effSort(withTime), a=arr.slice();
+  if(m==="ABC") a.sort((x,y)=>nameOf(getter(x)).localeCompare(nameOf(getter(y))));
+  else if(m==="KM") a.sort((x,y)=>distOf(getter(x))-distOf(getter(y)));
   return a;
 }
 
 /* two toggles, both circles, mutually exclusive. neither one on means the
    natural order: by time for plans, in the order added for places. */
-const SORTCYC=["ABC","123","KM"];
-const SORTWORD={ABC:"name","123":"time",KM:"distance"};
-const sortBtn=()=>{
-  const cur=SORTCYC.includes(sortMode)?sortMode:"123";
-  const next=SORTCYC[(SORTCYC.indexOf(cur)+1)%SORTCYC.length];
-  return `<button class="hbtn${cur==="123"?"":" on"}" data-sort="${next}"
-    aria-label="Sorted by ${SORTWORD[cur]}, tap to sort by ${SORTWORD[next]}"
-    >${cur==="KM"?LOC:cur}</button>`;
+const SORTWORD={ABC:"name","123":"the order you added them, timed plans first",KM:"distance"};
+const SORTFACE={ABC:"ABC","123":CLOCK,KM:PIN};
+/* saved places have no times, so a clock is not an option there */
+const sortCycle=(withTime)=>withTime?["123","ABC","KM"]:["ABC","KM"];
+const effSort=(withTime)=>{
+  if(sortMode==="KM") return "KM";
+  if(sortMode==="ABC") return "ABC";
+  return withTime?"123":"ABC";
+};
+const sortBtn=(withTime)=>{
+  const cyc=sortCycle(withTime), cur=effSort(withTime);
+  const next=cyc[(cyc.indexOf(cur)+1)%cyc.length];
+  return `<button class="hbtn on sortb" data-sort="${next}"
+    aria-label="Sorted by ${SORTWORD[cur]}. Tap to sort by ${SORTWORD[next]}"
+    >${SORTFACE[cur]}</button>`;
 };
 
 const SKIP=new Set(["the","a","an","of","de","du","la","le","el","and","at","in","on","d","der","das","den"]);
@@ -1946,25 +2003,26 @@ function miniMap(x){
 
 function plansBlock(x){
   const list=PLANS[x.date]||[];
-  let rows=list.map((p,i)=>({p,i}));
-  if(sortMode==="123"){
+  if(typeof editing==="number"&&!list[editing]) editing=null;
+  let rows=list.map((p,i)=>({p,i,e:enrich(p,x.city)}));
+  if(effSort(true)==="123"){
     const timed=rows.filter(({p})=>p.time).sort((a,b)=>a.p.time.localeCompare(b.p.time));
     rows=timed.concat(rows.filter(({p})=>!p.time));
   }else{
-    rows=sortList(rows,(o)=>o.p);
+    rows=sortList(rows,(o)=>o.e,true);
   }
   rows=rows.filter(({p})=>!p.done).concat(rows.filter(({p})=>p.done));
   let body="";
   if(list.length) body=rows.map(({p,i})=>planRow(p,i,x.date)).join("");
   const lead="";
   const gp=geoPlans(x), ru=routeUrl(x);
-  const tail=sortBtn()
+  const tail=sortBtn(!pick)
     +`<button class="hbtn${mapOpen?" on":""}${gp.length?"":" off"}" id="mapbtn" aria-label="Map">${MAPICON}</button>`
     +(ru?`<a class="hbtn" href="${esc(ru)}" target="_blank" rel="noopener" aria-label="Route">${ROUTE}</a>`
         :`<span class="hbtn off" aria-hidden="true">${ROUTE}</span>`);
   if(pick){ const pb=picker(x);
     return panel("plans",esc(pickHead.label),pickHead.meta,pb,{tail}); }
-  if(editing===null) body+=`<button class="bigadd" id="p-add">+ New plan</button>`;
+  if(editing===null) body+=`<button class="bigadd" id="p-add" style="--pink:${inkOn([x.p1],1)}" aria-label="New plan">+</button>`;
   return panel("plans","Plans","",(mapOpen?miniMap(x):"")+body,{tail});
 }
 
@@ -1984,7 +2042,7 @@ function wirePlans(x){
     editing=+b.dataset.editplan; pick=null; drawDay();
   }));
 
-  if(pick){
+  if(pick&&$("#pk-q")){
     const q=$("#pk-q");
     const sync=()=>{ pick.q=q.value; };
     q.addEventListener("input",()=>{
@@ -2034,7 +2092,7 @@ function wirePlans(x){
     });
   }
 
-  if(typeof editing==="number"){
+  if(typeof editing==="number"&&$("#e-cancel")){
     $("#e-cancel").addEventListener("click",()=>{editing=null;drawDay()});
     $("#e-kill").addEventListener("click",()=>{
       PLANS[x.date].splice(editing,1);

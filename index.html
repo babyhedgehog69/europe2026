@@ -450,6 +450,14 @@ svg.i{
   border-left:var(--rule-w) solid color-mix(in srgb,var(--bg) 55%,transparent);
 }
 .sa.del{background:var(--red-fill);color:#fff;border-left:0}
+/* the icon itself rings, just like the pin and grip sitting in front of it,
+   so the drawer reads as more of that same control language, not a
+   separate flat panel of colour */
+.sa-ring{
+  width:40px;height:40px;border-radius:50%;
+  border:var(--edge-w) solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+}
 .swipe-body{position:relative;background:var(--bg);padding:0 var(--pad);will-change:transform}
 .swipe.drag{position:relative}
 .swipe.drag .swipe-body{box-shadow:0 6px 16px rgba(0,0,0,.28)}
@@ -576,7 +584,7 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
    room instead, because that is the field with something to say. */
 .fld .two,.picker .two{display:flex;align-items:center;gap:var(--s3)}
 .fld .two span,.picker .two span{flex:0 0 auto;font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
-.fld .two input[type=time]{
+.fld .two .tfield{
   flex:1 1 0;width:auto;min-width:0;
   padding:var(--s3);text-align:center;font-size:var(--t5);
 }
@@ -717,9 +725,7 @@ const DROP=`<svg class="i" viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 10a6 6 0 0
 const MOON=`<svg class="i" viewBox="0 0 24 24" style="margin-right:6px"><path d="M20.5 14.8A8.6 8.6 0 0 1 9.2 3.5a8.6 8.6 0 1 0 11.3 11.3Z"/></svg>`;
 const HOME=`<svg class="i" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1Z"/></svg>`;
 const THERM=`<svg class="i" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/></svg>`;
-const CLOCK=`<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
 const WALK=`<svg class="i" viewBox="0 0 24 24"><circle cx="13" cy="4" r="1.6"/><path d="M11 21l2-6-3-3 1-5 3 3 3 1"/><path d="M10 12l-2 4"/><path d="M13 15l3 2 1 4"/></svg>`;
-const CLOCK2=`<svg class="i" viewBox="0 0 24 24" style="vertical-align:-3px"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>`;
 const NEAR=`<svg class="i" viewBox="0 0 24 24" style="vertical-align:-3px"><path d="M21 3 14 21l-2.5-7.5L4 11Z"/></svg>`;
 const LOC=`<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>`;
 const MAPICON=`<svg class="i" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2Z"/><path d="M9 4v14M15 6v14"/></svg>`;
@@ -728,8 +734,6 @@ const GRIP=`<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"
 const PENCIL=`<svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16Z"/><path d="M14 6l4 4"/></svg>`;
 const ARCH=`<svg class="i" viewBox="0 0 24 24"><path d="M3 7h18v3H3z"/><path d="M5 10v9h14v-9"/><path d="M10 14h4"/></svg>`;
 const XMARK=`<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
-const INSTA=`<svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>`;
-const GLOBE=`<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg>`;
 const PIN=`<svg class="i" viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>`;
 const TEL=`<svg class="i" viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>`;
 const SEAT=`<svg class="i" viewBox="0 0 24 24"><path d="M7 4v9a3 3 0 0 0 3 3h7"/><path d="M17 16v4"/><path d="M4 20h13"/><path d="M7 8h4"/></svg>`;
@@ -1136,6 +1140,27 @@ const dateForCity=(city)=>{const d=DAYS.find((d)=>d.city===city); return d?d.dat
 
 const dur=(m)=>m<90?`${m} min`:(m<1440?`${Math.round(m/60)} h`:`${Math.round(m/1440)} d`);
 
+/* a plain-text stand-in for a time field: digits only, auto-inserts the
+   colon as you type, always 24-hour while editing (so it works on a bare
+   numeric keypad with no AM/PM letters to type). clears itself rather than
+   saving a half-typed value. */
+function wireTimeFields(ids){
+  ids.forEach((id)=>{
+    const el=$("#"+id); if(!el) return;
+    el.addEventListener("input",()=>{
+      const digits=el.value.replace(/\D/g,"").slice(0,4);
+      el.value=digits.length>2?digits.slice(0,2)+":"+digits.slice(2):digits;
+    });
+    el.addEventListener("blur",()=>{
+      const m=el.value.match(/^(\d{1,2}):(\d{2})$/);
+      if(!m){ el.value=""; return; }
+      let hh=+m[1], mm=+m[2];
+      if(hh>23||mm>59){ el.value=""; return; }
+      el.value=String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+    });
+  });
+}
+
 /* the one line that lets you compare rows by eye when sorted by distance.
    walking only if it is a real option; past that, whichever mode the CITY
    actually supports -- never a drive estimate in a city with no rental
@@ -1354,8 +1379,8 @@ function cityList(){
 function placeRow(sp,i,city,date,hidden){
   return `<div class="swipe${openNow(sp,date)&&!openNow(sp,date).open?" shut":""}">
     <div class="swipe-actions">
-      <button class="sa" data-sw-sarch="${esc(city)}|${i}" aria-label="${hidden?"Unhide":"Archive"}">${ARCH}</button>
-      <button class="sa del" data-sw-sdel="${esc(city)}|${i}" aria-label="Remove">${XMARK}</button>
+      <button class="sa" data-sw-sarch="${esc(city)}|${i}" aria-label="${hidden?"Unhide":"Archive"}"><span class="sa-ring">${ARCH}</span></button>
+      <button class="sa del" data-sw-sdel="${esc(city)}|${i}" aria-label="Remove"><span class="sa-ring">${XMARK}</span></button>
     </div>
     <div class="swipe-body"><div class="spot${hidden?" gone":""}">
       ${rowHead(sp,date,links(sp)+`<button class="grip" data-grip aria-label="Actions">${GRIP}</button>`,
@@ -1395,7 +1420,7 @@ function drawPlaces(){
         <input id="s-paste" value="${esc(pasteText)}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
         <div class="fld"><span class="k">Name</span><input id="s-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
         <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
-        <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" placeholder="Optional" autocomplete="off">${esc(dNote)}</textarea></div>
+        <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
         <div class="row2"><button class="cancel" id="s-cancel">Cancel</button><button class="save" id="s-save">Add place</button></div>
       </div>`;})():`<button class="addrow" data-add="${esc(id)}">+ Add a place</button>`}`;
     return `<div style="--p1:${c.pop1};--p2:${c.pop2}">${panel(id,esc(c.city),live.length||"",inner,{flag:c.flag,city:1,tail:sortBtn(false)})}</div>`;
@@ -1732,7 +1757,7 @@ function placeCard(x){
 function hoursFor(sp,date){
   if(!sp.hours||!sp.hours.some(Boolean)) return "";
   const h=sp.hours[d(date).getDay()];
-  return h?(h==="Open 24h"?h:Trange(h)):"Closed today";
+  return h||"Closed today";
 }
 
 function closedDays(sp){
@@ -1856,9 +1881,9 @@ function planRow(p0,i,date){
   const hd=rowHead({...p,name:head},date,acts,sub);
   return `<div class="swipe${p.done?" arch":""}${hd.shut?" shut":""}" id="plan-${i}">
     <div class="swipe-actions">
-      <button class="sa" data-sw-edit="${i}" aria-label="Edit">${PENCIL}</button>
-      <button class="sa" data-sw-arch="${i}" aria-label="Archive">${ARCH}</button>
-      <button class="sa del" data-sw-del="${i}" aria-label="Delete">${XMARK}</button>
+      <button class="sa" data-sw-edit="${i}" aria-label="Edit"><span class="sa-ring">${PENCIL}</span></button>
+      <button class="sa" data-sw-arch="${i}" aria-label="Archive"><span class="sa-ring">${ARCH}</span></button>
+      <button class="sa del" data-sw-del="${i}" aria-label="Delete"><span class="sa-ring">${XMARK}</span></button>
     </div>
     <div class="swipe-body"><div class="plan">
     <button class="ptime${p.time?"":" tbd"}${editing===i?" on":""}" data-time="${i}" aria-label="${p.time?"Time":"Set a time"}"><span>${t||"--:--"}</span><i></i></button>
@@ -1916,9 +1941,9 @@ function picker(x){
     body=`<div class="fld"><span class="k">Name</span><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
       <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
       <div class="fld"><span class="k">When <i>(optional)</i></span><div class="two">
-        <input id="pk-time" type="time" autocomplete="off" value="${esc(dTime)}"><span>to</span><input id="pk-end" type="time" autocomplete="off" value="${esc(dEnd)}">
+        <input id="pk-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dTime)}"><span>to</span><input id="pk-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dEnd)}">
       </div></div>
-      <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" placeholder="Optional" autocomplete="off">${esc(dNote)}</textarea></div>
+      <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
       ${(!isLink&&q)?`<div class="opts">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`:""}`;
   }else if(pick.cat){
     pickHead={label:pick.cat==="__near"?"Nearby":pick.cat,meta:""};
@@ -1951,9 +1976,9 @@ function planEditor(p,i){
   return `<div class="form">
     <div class="fld"><span class="k">Name</span><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
     <div class="fld"><span class="k">When</span><div class="two">
-      <input id="e-time" type="time" autocomplete="off" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="time" autocomplete="off" value="${esc(p.end||"")}">
+      <input id="e-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.end||"")}">
     </div></div>
-    <div class="fld"><span class="k">Note</span><textarea id="e-note" rows="3" placeholder="Optional" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
+    <div class="fld"><span class="k">Notes</span><textarea id="e-note" rows="3" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
     <button class="save" id="e-save">Save</button>
     <div class="row2"><button class="cancel" id="e-cancel">Cancel</button><button class="kill" id="e-kill">Delete</button></div>
   </div>`;
@@ -2110,6 +2135,7 @@ function wirePlans(x){
       q.addEventListener("paste",()=>setTimeout(()=>{pick.q=q.value;pick.sec=null;drawDay();$("#pk-q").focus();},0));
     }
     if($("#pk-cancel")) $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
+    wireTimeFields(["pk-time","pk-end"]);
     if($("#pk-new-cancel")) $("#pk-new-cancel").addEventListener("click",()=>{
       pick.q="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;drawDay();
     });
@@ -2157,6 +2183,7 @@ function wirePlans(x){
 
   if(typeof editing==="number"&&$("#e-cancel")){
     $("#e-cancel").addEventListener("click",()=>{editing=null;drawDay()});
+  wireTimeFields(["e-time","e-end"]);
   const nameEl=$("#e-name");
     $("#e-kill").addEventListener("click",()=>{
       PLANS[x.date].splice(editing,1);

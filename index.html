@@ -475,7 +475,7 @@ svg.i{
 /* lifted so the ring centres on the first line of the title */
 .racts{
   float:right;display:flex;align-items:center;gap:var(--s2);
-  margin:-10px 0 var(--s1) var(--s4);
+  margin:8px 0 var(--s1) var(--s4);
 }
 .rtype{margin-top:var(--s1);font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
 .pmeta{margin-top:var(--s1);font-family:var(--mn);font-size:var(--t6);color:var(--mute);line-height:1.5}
@@ -554,7 +554,7 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
 .picker .chips.sec button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
 .optwrap{position:relative}
-.optwrap:last-child .opt{border-bottom:0}
+.opts:not(.root) .optwrap:last-child .opt{border-bottom:0}
 .opt{display:block;width:100%;padding:var(--s4) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
 .opt span{display:block;font-family:var(--mn);font-size:var(--t6);color:var(--mute);margin-top:var(--s1);line-height:1.5}
 .opt.dim{opacity:.45}
@@ -562,7 +562,7 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
 
 .cats{display:flex;flex-direction:column}
 .cat{display:flex;align-items:center;gap:var(--gap);width:100%;padding:var(--s5) 0;text-align:left;border-bottom:var(--rule-w) solid var(--rule)}
-.cat:last-child{border-bottom:0}
+.cats:not(.root) .cat:last-child{border-bottom:0}
 .cat b{flex:1 1 auto;font-size:var(--t3);font-weight:800;font-stretch:var(--wider);text-transform:uppercase;letter-spacing:var(--snug)}
 .cat.near b{color:var(--fg)}
 .cat span{font-family:var(--mn);font-size:var(--t6);color:var(--mute)}
@@ -625,8 +625,12 @@ button.rdist{text-decoration:underline;text-underline-offset:3px}
   font-family:var(--mn);font-size:var(--t5);
   background:var(--wash);color:var(--fg);border:var(--edge-w) solid var(--edge);
 }
+/* its own box, not a bare line of text -- and it always follows a rule,
+   never open padding, so the list above it reads as finished, not trailing
+   off into dead space */
 .addrow{
-  width:100%;padding:var(--s3) 0 0;margin-top:var(--s0);
+  display:block;width:100%;margin-top:var(--s4);padding:var(--s4);
+  text-align:center;border:var(--edge-w) solid var(--edge);
   font-family:var(--mn);font-size:var(--t6);color:var(--fg);
   letter-spacing:var(--ls-lbl);text-transform:uppercase;
 }
@@ -764,7 +768,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false;
+let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",placeSearch={},calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false;
 let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},FLEDITS={},flEditing=null,pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const SECFIX={"Bars and Clubs":"Bars & Clubs","Food and Drink":"Food & Drink","History and Art":"History & Art","Nature and Beauty":"Nature & Beauty"};
@@ -889,14 +893,13 @@ async function boot(){
   if(net&&net.data){ blob=net; try{localStorage.setItem(BKEY,JSON.stringify(net))}catch{} }
   else{ try{ blob=JSON.parse(localStorage.getItem(BKEY)||"null") }catch{} }
   if(!blob||!blob.data){ $("#lockmsg").textContent="Can't reach trip.enc.json and nothing is stored on this device."; return; }
-  let saved=null; try{saved=localStorage.getItem(KEY)}catch{}
-  if(saved){ try{ start(await decrypt(blob,saved)); return; }catch{ try{localStorage.removeItem(KEY)}catch{} } }
+  /* Passphrases are never persisted; unlock is per browser session. */
   if($("#pass"))$("#pass").focus();
 }
 async function attempt(){
   const p=$("#pass").value; if(!p)return;
   const b=$("#unlock"); b.disabled=true; b.textContent="Unlocking"; $("#lockmsg").textContent="";
-  try{ const t=await decrypt(blob,p); try{localStorage.setItem(KEY,p)}catch{} start(t); }
+  try{ const t=await decrypt(blob,p); start(t); }
   catch{ $("#lockmsg").textContent="WRONG PASSPHRASE"; $("#pass").select(); }
   finally{ b.disabled=false; b.textContent="Unlock"; }
 }
@@ -1023,7 +1026,7 @@ function go(i){
 function draw(){ view==="cal"?(calTab==="places"?drawPlaces():drawCal()):drawDay(); }
 
 async function loadCalWx(){
-  if(wxdLoaded) return; wxdLoaded=true;
+  if(wxdLoaded) return;
   const groups={};
   DAYS.forEach((x)=>{
     const g=geoFor(x); if(!g)return;
@@ -1426,14 +1429,23 @@ function drawPlaces(){
     const id="city:"+c.city;
     const adding=pasting===id;
     const parsed=adding?parseSpot(pasteText):{sec:null};
-    const inner=`
-      ${live.length?SECTIONS.map((sec)=>{
+    const sq=(placeSearch[c.city]||"").trim();
+    let listingHtml;
+    if(sq){
+      const hits=sortList(live.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(sq.toLowerCase())),(o)=>o.sp,false);
+      listingHtml=hits.length?hits.map((o)=>placeRow(o.sp,o.i,c.city,dateForCity(c.city))).join(""):`<p class="empty">Nothing matches.</p>`;
+    }else{
+      listingHtml=live.length?SECTIONS.map((sec)=>{
         const items=sortList(live.filter(({sp})=>sp.sec===sec),(o)=>o.sp,false);
         if(!items.length) return "";
         const k=c.city+"|"+sec, open=openSec.has(k);
         return `<button class="pgh${open?" on":""}" data-pgh="${esc(k)}"><span class="l">${esc(sec)}</span><span class="n">${items.length}</span></button>
-          ${open?items.map((o)=>placeRow(o.sp,o.i,c.city,x.date)).join(""):""}`;
-      }).join(""):`<p class="empty">Nothing saved yet.</p>`}
+          ${open?items.map((o)=>placeRow(o.sp,o.i,c.city,dateForCity(c.city))).join(""):""}`;
+      }).join(""):`<p class="empty">Nothing saved yet.</p>`;
+    }
+    const inner=`
+      <input data-placesearch="${esc(c.city)}" value="${esc(sq)}" placeholder="Search" autocomplete="off" autocorrect="off" spellcheck="false">
+      ${listingHtml}
       ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
         ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
       ${adding?(()=>{
@@ -1441,7 +1453,7 @@ function drawPlaces(){
         const dSec=(pick&&pick.sec)||parsed.sec||SECTIONS[0];
         const dNote=(pick&&pick.note)||"";
         return `<div class="picker">
-        <input id="s-paste" value="${esc(pasteText)}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
+        <input id="s-paste" value="${esc(pasteText)}" placeholder="Paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
         <div class="fld"><input id="s-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
         <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
         <div class="fld"><span class="k">Notes</span><textarea id="s-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>
@@ -1481,6 +1493,12 @@ function drawPlaces(){
     const k=b.dataset.pgh;
     if(openSec.has(k)) openSec.delete(k); else { openSec.add(k); snapTo='[data-pgh="'+k.replace(/"/g,'\\"')+'"]'; }
     draw();
+  }));
+  $("#screen").querySelectorAll("[data-placesearch]").forEach((el)=>el.addEventListener("input",()=>{
+    const caret=el.selectionStart, city=el.dataset.placesearch;
+    placeSearch[city]=el.value; draw();
+    const n=document.querySelector(`[data-placesearch="${city}"]`);
+    if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
   }));
   $("#screen").querySelectorAll("[data-add]").forEach((b)=>b.addEventListener("click",()=>{
     pasting=b.dataset.add; pasteText=""; pick={sec:null,name:null,note:null}; openPanel=b.dataset.add; draw();
@@ -1740,18 +1758,18 @@ function flightHero(f,idx,dayP2){
 
     <div class="codes">${(f.codes||[]).map((c)=>`<button class="code" data-copy="${esc(c.value)}"><span class="l">${esc(c.label)}</span><span class="v">${esc(c.value)}</span></button>`).join("")}${seats}</div>
     ${notes(noteList)}
-    ${flEditing===key?flightEditor(f,key,terminal,gate,seatStr,ed.notes||""):""}`;
+    ${flEditing===key?flightEditor(f,key,terminal,gate,seatStr,ed.notes||"",dayP2):""}`;
   return panel("fl"+idx,"Flight",`${esc(f.from.code)} &rarr; ${esc(f.to.code)} &middot; ${esc(T(f.from.time))}`,body,
     {tail:`<button class="hbtn" data-fledit="${esc(key)}" aria-label="Edit flight details">${PENCIL}</button>`});
 }
 
-function flightEditor(f,key,terminal,gate,seatStr,noteStr){
+function flightEditor(f,key,terminal,gate,seatStr,noteStr,dayP1){
   return `<div class="form">
     <div class="fld"><span class="k">Terminal</span><input id="fle-term" value="${esc(terminal)}" placeholder="Terminal" autocomplete="off"></div>
     <div class="fld"><span class="k">Gate</span><input id="fle-gate" value="${esc(gate)}" placeholder="Gate" autocomplete="off"></div>
     <div class="fld"><span class="k">Seats</span><input id="fle-seats" value="${esc(seatStr)}" placeholder="e.g. 14A, 14B" autocomplete="off"></div>
     <div class="fld"><span class="k">Add a note</span><textarea id="fle-notes" rows="2" placeholder="e.g. gate changed at the counter" autocomplete="off">${esc(noteStr)}</textarea></div>
-    <button class="save" id="fle-save">Save</button>
+    <button class="save city" id="fle-save" style="--pink:${inkOn([dayP1||fgHex()],1)}">Save</button>
     <button class="cancel" id="fle-cancel">Cancel</button>
   </div>`;
 }
@@ -1931,7 +1949,7 @@ function enrich(p,city){
     phone:m.phone||p.phone,lat:p.lat!=null?p.lat:m.lat,lng:p.lng!=null?p.lng:m.lng};
 }
 
-function planRow(p0,i,date){
+function planRow(p0,i,date,dayP1){
   const p=enrich(p0,(DAYS[cur]||{}).city||"");
   const t=p.time?(p.end?`${esc(T(p.time))} &ndash; ${esc(T(p.end))}`:esc(T(p.time))):"";
   const head=p.where||p.what||"Plan";
@@ -1950,7 +1968,7 @@ function planRow(p0,i,date){
     <button class="ptime${p.time?"":" tbd"}${editing===i?" on":""}" data-time="${i}" aria-label="${p.time?"Time":"Set a time"}"><span>${t||"--:--"}</span><i></i></button>
     ${hd.html}
     ${travOpen===i?travelRow(p,date):""}
-    ${editing===i?planEditor(p,i):""}
+    ${editing===i?planEditor(p,i,dayP1):""}
   </div></div></div>`;
 }
 
@@ -1959,9 +1977,6 @@ const fmtShort=(dt)=>{const t=new Date(dt+"T00:00:00");return DOW[t.getDay()]+" 
 let pickHead={label:"Add a plan",meta:""};
 function picker(x){
   pickHead={label:"Add a plan",meta:""};
-  const q=(pick.q||"").trim();
-  const parsed=parseSpot(pick.q);
-  const isLink=!!parsed.url;
   const city=x.city;
   const done=plannedMap();
   const today=plannedToday(x.date);
@@ -1982,35 +1997,25 @@ function picker(x){
     return fresh.map((o)=>row(o)).join("")+used.map((o)=>row(o,true)).join("");
   };
 
-  let hits=[], exact=false;
-  if(!isLink&&q){
-    hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
-    exact=pool.some(({sp})=>sp.name.toLowerCase()===q.toLowerCase());
-  }
-  /* a pasted link needs no confirming -- straight to the form. plain text
-     only commits to "creating" once you've explicitly said so, so a single
-     typed letter doesn't yank the whole screen into a form while you're
-     still just searching. */
-  const creating=isLink||!!pick.newMode;
+  /* creating is reached one way: tapping "+ Add a plan". typing in the
+     search field never triggers it, so nothing about the search view
+     jumps or swaps shape while you're just filtering. */
+  const creating=!!pick.newMode;
   let body;
   if(creating){
-    const dName=pick.name!=null?pick.name:(parsed.name||q);
+    const parsed=parseSpot(pick.paste||"");
+    const dName=pick.name!=null?pick.name:(parsed.name||"");
     const dSec=pick.sec||parsed.sec||SECTIONS[0];
     const dNote=pick.note!=null?pick.note:"";
     const dTime=pick.time!=null?pick.time:"";
     const dEnd=pick.endTime!=null?pick.endTime:"";
-    /* nothing else on screen while creating -- no matching plans, no list */
-    body=`<div class="fld"><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
+    body=`<input id="pk-paste" value="${esc(pick.paste||"")}" placeholder="Paste a link" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="fld"><input id="pk-name" value="${esc(dName)}" placeholder="Name" autocomplete="off"></div>
       <div class="chips sec">${SECTIONS.map((k)=>`<button class="${dSec===k?"on":""}" data-psec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
       <div class="fld"><div class="two">
         <input id="pk-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dTime)}"><span>to</span><input id="pk-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(dEnd)}">
       </div></div>
       <div class="fld"><span class="k">Notes</span><textarea id="pk-note" rows="2" autocomplete="off">${esc(dNote)}</textarea></div>`;
-  }else if(!!q){
-    /* searching: show what matches, plus one explicit way to start something
-       new. tapping that -- not typing itself -- is what commits to creating. */
-    body=`<div class="opts">${hits.length?listOf(hits):""}
-      <button class="opt new" data-newmode="1">+ Create &ldquo;${esc(q)}&rdquo;</button></div>`;
   }else if(pick.cat){
     pickHead={label:pick.cat==="__near"?"Nearby":pick.cat,meta:""};
     const items=pick.cat==="__near"
@@ -2019,33 +2024,42 @@ function picker(x){
     pickHead.meta=String(items.length);
     body=`<div class="opts">${items.length?listOf(items):`<p class="empty">${pick.cat==="__near"?(ME?`Nothing within a 15 minute ${nearWord(x.date)}.`:"Turn on location to see what is close."):"Nothing here yet."}</p>`}</div>`;
   }else{
-    const near=ME?pool.filter(({sp})=>sp.lat!=null&&nearMin(x.date,km(ME.lat,ME.lng,sp.lat,sp.lng))<=15).length:null;
-    body=`<div class="cats">
-      <button class="cat near" data-cat="__near"><b>Nearby</b><span>${near==null?`15 min ${nearWord(x.date)}`:near}</span></button>
-      ${SECTIONS.map((sec)=>{
-        const n=pool.filter(({sp})=>sp.sec===sec).length;
-        if(!n) return "";
-        return `<button class="cat" data-cat="${esc(sec)}"><b>${esc(sec)}</b><span>${n}</span></button>`;
-      }).join("")}</div>`;
+    const q=(pick.search||"").trim();
+    let listBody;
+    if(q){
+      const hits=pool.filter(({sp})=>(sp.name+" "+(sp.type||"")).toLowerCase().includes(q.toLowerCase()));
+      listBody=`<div class="opts root">${hits.length?listOf(hits):`<p class="empty">Nothing matches.</p>`}</div>`;
+    }else{
+      const near=ME?pool.filter(({sp})=>sp.lat!=null&&nearMin(x.date,km(ME.lat,ME.lng,sp.lat,sp.lng))<=15).length:null;
+      listBody=`<div class="cats root">
+        <button class="cat near" data-cat="__near"><b>Nearby</b><span>${near==null?`15 min ${nearWord(x.date)}`:near}</span></button>
+        ${SECTIONS.map((sec)=>{
+          const n=pool.filter(({sp})=>sp.sec===sec).length;
+          if(!n) return "";
+          return `<button class="cat" data-cat="${esc(sec)}"><b>${esc(sec)}</b><span>${n}</span></button>`;
+        }).join("")}</div>`;
+    }
+    body=`<input id="pk-search" value="${esc(pick.search||"")}" placeholder="Search" autocomplete="off" autocorrect="off" spellcheck="false">
+      ${listBody}
+      <button class="addrow" data-newmode="1">+ Add a plan</button>`;
   }
 
   return `<div class="picker">
     ${body}
-    ${creating?"":`<input id="pk-q" value="${esc(pick.q||"")}" placeholder="Search or paste a link" autocomplete="off" autocorrect="off" spellcheck="false">`}
     ${creating
       ?`<div class="row2"><button class="cancel" id="pk-new-cancel">Cancel</button><button class="save city" id="pk-new" style="--pink:${inkOn([x.p1||fgHex()],1)}">Add Plan</button></div>`
       :`<button class="cancel" id="pk-cancel">Cancel</button>`}
   </div>`;
 }
 
-function planEditor(p,i){
+function planEditor(p,i,dayP1){
   return `<div class="form">
     <div class="fld"><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
     <div class="fld"><div class="two">
       <input id="e-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.end||"")}">
     </div></div>
     <div class="fld"><span class="k">Notes</span><textarea id="e-note" rows="3" autocomplete="off" autocapitalize="sentences">${esc(p.note||"")}</textarea></div>
-    <button class="save" id="e-save">Save</button>
+    <button class="save city" id="e-save" style="--pink:${inkOn([dayP1||fgHex()],1)}">Save</button>
     <div class="row2"><button class="cancel" id="e-cancel">Cancel</button><button class="kill" id="e-kill">Delete</button></div>
   </div>`;
 }
@@ -2153,7 +2167,7 @@ function plansBlock(x){
   }
   rows=rows.filter(({p})=>!p.done).concat(rows.filter(({p})=>p.done));
   let body="";
-  if(list.length) body=rows.map(({p,i})=>planRow(p,i,x.date)).join("");
+  if(list.length) body=rows.map(({p,i})=>planRow(p,i,x.date,x.p1)).join("");
   const lead="";
   const gp=geoPlans(x), ru=routeUrl(x);
   const tail=sortBtn(!pick)
@@ -2168,7 +2182,7 @@ function plansBlock(x){
 
 function wirePlans(x){
   const add=$("#p-add");
-  if(add) add.addEventListener("click",()=>{pick={q:"",sec:null,cat:null};editing=null;snapTo=".pnl.open>.ph";drawDay()});
+  if(add) add.addEventListener("click",()=>{pick={search:"",sec:null,cat:null};editing=null;snapTo=".pnl.open>.ph";drawDay()});
 
   $("#screen").querySelectorAll("[data-trav]").forEach((b)=>b.addEventListener("click",(e)=>{
     e.stopPropagation();
@@ -2183,27 +2197,35 @@ function wirePlans(x){
   }));
 
   if(pick){
-    const q=$("#pk-q");
+    const paste=$("#pk-paste");
     const sync=()=>{
-      if(q) pick.q=q.value;
+      if(paste) pick.paste=paste.value;
       const n=$("#pk-name"),no=$("#pk-note"),t=$("#pk-time"),e=$("#pk-end");
       if(n) pick.name=n.value; if(no) pick.note=no.value;
       if(t) pick.time=t.value; if(e) pick.endTime=e.value;
     };
-    if(q){
-      q.addEventListener("input",()=>{
-        const caret=q.selectionStart, wasLink=!!parseSpot(pick.q).url;
-        pick.q=q.value;
-        if(wasLink!==!!parseSpot(pick.q).url) pick.sec=null;
-        drawDay();
-        const n=$("#pk-q"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
+    const search=$("#pk-search");
+    if(search){
+      search.addEventListener("input",()=>{
+        const caret=search.selectionStart;
+        pick.search=search.value; drawDay();
+        const n=$("#pk-search"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
       });
-      q.addEventListener("paste",()=>setTimeout(()=>{pick.q=q.value;pick.sec=null;drawDay();$("#pk-q").focus();},0));
+    }
+    if(paste){
+      paste.addEventListener("input",()=>{
+        const caret=paste.selectionStart, wasLink=!!parseSpot(pick.paste).url;
+        pick.paste=paste.value;
+        if(wasLink!==!!parseSpot(pick.paste).url) pick.sec=null;
+        drawDay();
+        const n=$("#pk-paste"); if(n){ n.focus(); try{n.setSelectionRange(caret,caret)}catch{} }
+      });
+      paste.addEventListener("paste",()=>setTimeout(()=>{pick.paste=paste.value;pick.sec=null;drawDay();$("#pk-paste").focus();},0));
     }
     if($("#pk-cancel")) $("#pk-cancel").addEventListener("click",()=>{pick=null;drawDay()});
     wireTimeFields(["pk-time","pk-end"]);
     if($("#pk-new-cancel")) $("#pk-new-cancel").addEventListener("click",()=>{
-      pick.q="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;pick.newMode=false;drawDay();
+      pick.paste="";pick.name=null;pick.note=null;pick.time=null;pick.endTime=null;pick.sec=null;pick.newMode=false;drawDay();
     });
     $("#screen").querySelectorAll("[data-newmode]").forEach((b)=>b.addEventListener("click",()=>{
       sync(); pick.newMode=true; drawDay();
@@ -2234,7 +2256,7 @@ function wirePlans(x){
     const nw=$("#pk-new");
     if(nw) nw.addEventListener("click",()=>{
       sync();
-      const p=parseSpot(pick.q);
+      const p=parseSpot(pick.paste||"");
       const title=(pick.name||"").trim();
       if(!title) return;
       const sec=pick.sec||p.sec||SECTIONS[0];
@@ -2243,7 +2265,7 @@ function wirePlans(x){
         saveSpots(); push("spots:"+x.city);
       }
       const list=PLANS[x.date]=PLANS[x.date]||[];
-      list.push({where:title,url:p.url||"",lat:p.lat,lng:p.lng,time:pick.time||"",end:pick.endTime||"",note:pick.note||""});
+      list.push({id:crypto.randomUUID(),where:title,url:p.url||"",lat:p.lat,lng:p.lng,time:pick.time||"",end:pick.endTime||"",note:pick.note||""});
       savePlans(); snapTo="#plan-"+(list.length-1); push(x.date);
       pick=null; drawDay(); toast("Added "+title);
       return;
@@ -2399,7 +2421,7 @@ function wireDrag(x){
 
 function addPlan(x,p){
   const list=PLANS[x.date]=PLANS[x.date]||[];
-  list.push({...p,time:"",end:""});
+  list.push({...p,id:p.id||crypto.randomUUID(),time:"",end:""});
   savePlans(); pick=null; editing=list.length-1; snapTo="#plan-"+(list.length-1); drawDay(); push(x.date);
 }
 

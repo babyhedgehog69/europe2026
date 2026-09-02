@@ -440,7 +440,8 @@ svg.i{
 .swipe:last-of-type{border-bottom:0}
 .swipe-actions{position:absolute;right:0;top:0;bottom:0;display:flex}
 .sa{
-  width:var(--sa-w);display:flex;align-items:center;justify-content:center;padding:0;
+  width:var(--sa-w);display:flex;align-items:flex-start;justify-content:center;padding:0;
+  padding-top:calc(50.5px);
   background:color-mix(in srgb,var(--mute) 22%,var(--bg));color:var(--fg);
   border-left:var(--rule-w) solid color-mix(in srgb,var(--bg) 55%,transparent);
 }
@@ -893,13 +894,14 @@ async function boot(){
   if(net&&net.data){ blob=net; try{localStorage.setItem(BKEY,JSON.stringify(net))}catch{} }
   else{ try{ blob=JSON.parse(localStorage.getItem(BKEY)||"null") }catch{} }
   if(!blob||!blob.data){ $("#lockmsg").textContent="Can't reach trip.enc.json and nothing is stored on this device."; return; }
-  /* Passphrases are never persisted; unlock is per browser session. */
+  let saved=null; try{saved=localStorage.getItem(KEY)}catch{}
+  if(saved){ try{ start(await decrypt(blob,saved)); return; }catch{ try{localStorage.removeItem(KEY)}catch{} } }
   if($("#pass"))$("#pass").focus();
 }
 async function attempt(){
   const p=$("#pass").value; if(!p)return;
   const b=$("#unlock"); b.disabled=true; b.textContent="Unlocking"; $("#lockmsg").textContent="";
-  try{ const t=await decrypt(blob,p); start(t); }
+  try{ const t=await decrypt(blob,p); try{localStorage.setItem(KEY,p)}catch{} start(t); }
   catch{ $("#lockmsg").textContent="WRONG PASSPHRASE"; $("#pass").select(); }
   finally{ b.disabled=false; b.textContent="Unlock"; }
 }
@@ -1026,7 +1028,7 @@ function go(i){
 function draw(){ view==="cal"?(calTab==="places"?drawPlaces():drawCal()):drawDay(); }
 
 async function loadCalWx(){
-  if(wxdLoaded) return;
+  if(wxdLoaded) return; wxdLoaded=true;
   const groups={};
   DAYS.forEach((x)=>{
     const g=geoFor(x); if(!g)return;
@@ -1447,7 +1449,7 @@ function drawPlaces(){
       <input data-placesearch="${esc(c.city)}" value="${esc(sq)}" placeholder="Search" autocomplete="off" autocorrect="off" spellcheck="false">
       ${listingHtml}
       ${hid.length?`<button class="seenbar" data-seen="${esc(id)}">${seenOpen.has(id)?"&minus;":"+"} ${hid.length} hidden</button>
-        ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,x.date,true)).join(""):""}`:""}
+        ${seenOpen.has(id)?hid.map((o)=>placeRow(o.sp,o.i,c.city,dateForCity(c.city),true)).join(""):""}`:""}
       ${adding?(()=>{
         const dName=(pick&&pick.name!=null)?pick.name:(parsed.name||pasteText.replace(/https?:\/\/\S+/g,"").trim());
         const dSec=(pick&&pick.sec)||parsed.sec||SECTIONS[0];
@@ -2265,7 +2267,7 @@ function wirePlans(x){
         saveSpots(); push("spots:"+x.city);
       }
       const list=PLANS[x.date]=PLANS[x.date]||[];
-      list.push({id:crypto.randomUUID(),where:title,url:p.url||"",lat:p.lat,lng:p.lng,time:pick.time||"",end:pick.endTime||"",note:pick.note||""});
+      list.push({where:title,url:p.url||"",lat:p.lat,lng:p.lng,time:pick.time||"",end:pick.endTime||"",note:pick.note||""});
       savePlans(); snapTo="#plan-"+(list.length-1); push(x.date);
       pick=null; drawDay(); toast("Added "+title);
       return;
@@ -2421,7 +2423,7 @@ function wireDrag(x){
 
 function addPlan(x,p){
   const list=PLANS[x.date]=PLANS[x.date]||[];
-  list.push({...p,id:p.id||crypto.randomUUID(),time:"",end:""});
+  list.push({...p,time:"",end:""});
   savePlans(); pick=null; editing=list.length-1; snapTo="#plan-"+(list.length-1); drawDay(); push(x.date);
 }
 

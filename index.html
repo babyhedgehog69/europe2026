@@ -2097,6 +2097,7 @@ function picker(x){
 function planEditor(p,i,dayP1){
   return `<div class="form">
     <div class="fld"><input id="e-name" value="${esc(p.where||p.what||"")}" placeholder="Name" autocomplete="off"></div>
+    <div class="fld"><span class="k">Maps link</span><input id="e-url" value="${esc(p.url||"")}" placeholder="Paste a link" autocomplete="off"></div>
     <div class="fld"><div class="two">
       <input id="e-time" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.time||"")}"><span>to</span><input id="e-end" type="text" inputmode="numeric" autocomplete="off" class="tfield" placeholder="--:--" maxlength="5" value="${esc(p.end||"")}">
     </div></div>
@@ -2333,6 +2334,12 @@ function wirePlans(x){
       const p=PLANS[x.date][editing];
       const name=($("#e-name").value||"").trim();
       if(name) p.where=name;
+      const newUrl=($("#e-url").value||"").trim();
+      p.url=newUrl;
+      if(newUrl){
+        const parsed=parseSpot(newUrl);
+        if(parsed.lat!=null){ p.lat=parsed.lat; p.lng=parsed.lng; }
+      }
       p.time=$("#e-time").value; p.end=$("#e-end").value; p.note=$("#e-note").value.trim();
       savePlans(); editing=null; drawDay(); push(x.date); toast("Saved");
     });

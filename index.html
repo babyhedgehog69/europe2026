@@ -199,7 +199,11 @@ svg.i{
   letter-spacing:var(--tight);text-transform:uppercase;line-height:1;
   color:var(--mc,var(--fg));
 }
+/* stepped only as far as the actual rendered width needs, not by a
+   character-count guess -- most names never reach either of these */
 #mastcity.long{font-size:var(--t2)}
+#mastcity.longer{font-size:var(--t3)}
+#mastcity.longest{font-size:var(--t4)}
 .mast .grp{
   flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);line-height:1;
   font-family:var(--mn);font-size:var(--t6);color:var(--mute);
@@ -439,9 +443,14 @@ svg.i{
 }
 .swipe:last-of-type{border-bottom:0}
 .swipe-actions{position:absolute;right:0;top:0;bottom:0;display:flex}
+/* padding-top here is a fallback only, for the instant before JS measures
+   the row -- wireSwipe() overwrites it per row, since a plan row (which
+   has a time badge above its title) and a place row (which doesn't) put
+   their icons at genuinely different heights, and one fixed number can
+   only ever match one of them. */
 .sa{
   width:var(--sa-w);display:flex;align-items:flex-start;justify-content:center;padding:0;
-  padding-top:calc(50.5px);
+  padding-top:50.5px;
   background:color-mix(in srgb,var(--mute) 22%,var(--bg));color:var(--fg);
   border-left:var(--rule-w) solid color-mix(in srgb,var(--bg) 55%,transparent);
 }
@@ -769,7 +778,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",placeSearch={},calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false;
+let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",placeSearch={},calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false,spotEditing=null;
 let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},FLEDITS={},flEditing=null,pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const SECFIX={"Bars and Clubs":"Bars & Clubs","Food and Drink":"Food & Drink","History and Art":"History & Art","Nature and Beauty":"Nature & Beauty"};
@@ -1143,7 +1152,7 @@ function km(a,b,c,d){
   return 2*R*Math.asin(Math.sqrt(h));
 }
 const fmtKm=(k)=>k<1?Math.round(k*1000)+" m":k.toFixed(k<10?1:0)+" km";
-const driveMin=(k)=>Math.max(2,Math.round(k*1.3/28*60));
+const driveMin=(k)=>Math.max(2,Math.round(k*1.3/50*60));
 const walkMin=(k)=>Math.round(k*1.25/4.8*60);
 const hasCar=(date)=>(TRIP&&TRIP.cars||[]).some((c)=>
   c.pickup&&c.dropoff&&c.pickup.date<=date&&date<=c.dropoff.date);
@@ -1405,9 +1414,23 @@ function cityList(){
   const out=[]; TRIP.stays.forEach((s)=>{if(!out.some((x)=>x.city===s.city))out.push(s)}); return out;
 }
 
+function spotEditor(sp,city,i){
+  const key=city+"|"+i;
+  return `<div class="form">
+    <div class="fld"><span class="k">Name</span><input id="se-name" value="${esc(sp.name||"")}" placeholder="Name" autocomplete="off"></div>
+    <div class="fld"><span class="k">Maps link</span><input id="se-url" value="${esc(sp.url||"")}" placeholder="Paste a link" autocomplete="off"></div>
+    <div class="chips sec">${SECTIONS.map((k)=>`<button class="${(sp.sec||SECTIONS[0])===k?"on":""}" data-se-sec="${esc(k)}">${esc(k)}</button>`).join("")}</div>
+    <div class="fld"><span class="k">Notes</span><textarea id="se-note" rows="2" autocomplete="off">${esc(sp.note||"")}</textarea></div>
+    <button class="save city" id="se-save" data-se-key="${esc(key)}" style="--pink:${inkOn([(TRIP.stays.find((s)=>s.city===city)||{}).pop1||fgHex()],1)}">Save</button>
+    <button class="cancel" id="se-cancel">Cancel</button>
+  </div>`;
+}
+
 function placeRow(sp,i,city,date,hidden){
+  const ekey=city+"|"+i;
   return `<div class="swipe${openNow(sp,date)&&!openNow(sp,date).open?" shut":""}">
     <div class="swipe-actions">
+      <button class="sa" data-sw-edit-spot="${esc(ekey)}" aria-label="Edit"><span class="sa-ring">${PENCIL}</span></button>
       <button class="sa" data-sw-sarch="${esc(city)}|${i}" aria-label="${hidden?"Unhide":"Archive"}"><span class="sa-ring">${ARCH}</span></button>
       <button class="sa del" data-sw-sdel="${esc(city)}|${i}" aria-label="Remove"><span class="sa-ring">${XMARK}</span></button>
     </div>
@@ -1415,6 +1438,7 @@ function placeRow(sp,i,city,date,hidden){
       ${rowHead(sp,date,links(sp)+`<button class="grip" data-grip aria-label="Actions">${GRIP}</button>`,
         (sortMode==="KM"&&distLine(sp,dateForCity(city))?`<button class="rdist" data-travplace="${esc(city)}|${i}">${distLine(sp,dateForCity(city))}</button>`:"")
         +infoLine(sp,date)).html}
+      ${spotEditing===ekey?spotEditor(sp,city,i):""}
       ${travOpen==="p"+city+"|"+i?travelRow(sp,dateForCity(city)):""}
     </div></div></div>`;
 }
@@ -1537,11 +1561,23 @@ function wireTabs(){
   $("#screen").querySelectorAll("[data-tab]").forEach((b)=>b.addEventListener("click",()=>{calTab=b.dataset.tab;pasting=null;draw()}));
 }
 
+/* stepped only as far as the actual rendered width needs, not by a
+   character-count guess -- most names never reach either of these */
+function fitMastText(el){
+  el.classList.remove("long","longer","longest");
+  if(el.scrollWidth<=el.clientWidth) return;
+  el.classList.add("long");
+  if(el.scrollWidth<=el.clientWidth) return;
+  el.classList.remove("long"); el.classList.add("longer");
+  if(el.scrollWidth<=el.clientWidth) return;
+  el.classList.remove("longer"); el.classList.add("longest");
+}
+
 function paintMast(x){
   const c=$("#mastcity"); if(!c)return;
   c.textContent=x.flights.length&&!x.stay&&!x.arriving.length?x.city:x.city;
   c.style.setProperty("--mc",(x.arriving[0]||x.stay)?x.p1:"var(--fg)");
-  c.classList.toggle("long",c.textContent.length>7);
+  fitMastText(c);
   const s=x.arriving[0]||x.stay;
   const h=$("#home");
   if(s&&s.address){
@@ -1866,7 +1902,9 @@ function links(sp){
   const name=(sp.where||sp.name||"").trim();
   const city=sp.cityHint||(DAYS[cur]||{}).city||"";
   let url="";
-  if(sp.url&&/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(sp.url)) url=sp.url;
+  const isRealShareLink=sp.url&&/maps\.app\.goo\.gl|goo\.gl\/maps/.test(sp.url);
+  const isFullPlaceUrl=sp.url&&/\/maps\/place\/[^?]/.test(sp.url);
+  if(isRealShareLink||isFullPlaceUrl) url=sp.url;
   else if(name) url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name+(city?", "+city:""));
   else if(sp.lat!=null) url=`https://www.google.com/maps/search/?api=1&query=${sp.lat},${sp.lng}`;
   return url?`<a class="lk" href="${esc(url)}" target="_blank" rel="noopener" aria-label="Open in Maps">${PIN}</a>`:"";
@@ -2259,8 +2297,7 @@ function wirePlans(x){
     if(nw) nw.addEventListener("click",()=>{
       sync();
       const p=parseSpot(pick.paste||"");
-      const title=(pick.name||"").trim();
-      if(!title) return;
+      const title=(pick.name||"").trim()||"New place";
       const sec=pick.sec||p.sec||SECTIONS[0];
       if(p.url){
         (SPOTS[x.city]=SPOTS[x.city]||[]).push({name:title,url:p.url,sec,lat:p.lat,lng:p.lng});
@@ -2297,6 +2334,13 @@ function wireSwipe(x){
   $("#screen").querySelectorAll(".swipe").forEach((el)=>{
     const body=el.querySelector(".swipe-body");
     const W=el.querySelector(".swipe-actions").children.length*SA_W;
+    const front=el.querySelector(".racts .lk, .racts .grip");
+    if(front){
+      const rowTop=el.getBoundingClientRect().top;
+      const f=front.getBoundingClientRect();
+      const centre=(f.top+f.height/2)-rowTop;
+      el.querySelectorAll(".sa").forEach((sa)=>{ sa.style.paddingTop=(centre-20)+"px"; });
+    }
     let x0=null,y0=null,dx=0,lock=null,open=el.classList.contains("open");
     const set=(v)=>{body.style.transform=`translateX(${v}px)`;};
     el.addEventListener("touchstart",(e)=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;lock=null;dx=open?-W:0;body.style.transition="";},{passive:true});
@@ -2346,6 +2390,21 @@ function wireSwipe(x){
     if(!PLANS[x.date].length)delete PLANS[x.date];
     savePlans(); editing=null; drawDay(); push(x.date); toast("Deleted");
   }));
+  $("#screen").querySelectorAll("[data-sw-edit-spot]").forEach((b)=>b.addEventListener("click",()=>{
+    spotEditing=spotEditing===b.dataset.swEditSpot?null:b.dataset.swEditSpot; draw();
+  }));
+  if($("#se-cancel")) $("#se-cancel").addEventListener("click",()=>{ spotEditing=null; draw(); });
+  $("#screen").querySelectorAll("[data-se-sec]").forEach((b)=>b.addEventListener("click",()=>{
+    const [c,i]=spotEditing.split("|"); SPOTS[c][+i].sec=b.dataset.seSec; draw();
+  }));
+  if($("#se-save")) $("#se-save").addEventListener("click",()=>{
+    const [c,i]=spotEditing.split("|"); const sp=SPOTS[c][+i];
+    const name=($("#se-name").value||"").trim();
+    if(name) sp.name=name;
+    sp.url=($("#se-url").value||"").trim();
+    sp.note=($("#se-note").value||"").trim();
+    saveSpots(); spotEditing=null; draw(); push("spots:"+c); toast("Saved");
+  });
   $("#screen").querySelectorAll("[data-sw-sarch]").forEach((b)=>b.addEventListener("click",()=>{
     const [c,i]=b.dataset.swSarch.split("|");
     SPOTS[c][+i].done=!SPOTS[c][+i].done; saveSpots(); draw(); push("spots:"+c);

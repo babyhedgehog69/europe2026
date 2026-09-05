@@ -374,7 +374,9 @@ svg.i{
 
 .hbtn{border-color:var(--mute);color:var(--mute)}
 .hbtn.on{background:var(--fg);border-color:var(--fg);color:var(--bg)}
-.hbtn.off{opacity:.28;pointer-events:none}
+/* dimmed, but never dead: a disabled Map/Route button now explains why
+   when tapped, rather than doing nothing with no feedback at all */
+.hbtn.off{opacity:.28}
 
 /* 9 ── CARDS ──────────────────────────────────────────────── */
 .leg{display:flex;align-items:flex-start;gap:var(--s3);margin-top:var(--s4)}
@@ -2213,7 +2215,7 @@ function plansBlock(x){
   const tail=sortBtn(!pick)
     +`<button class="hbtn${mapOpen?" on":""}${gp.length?"":" off"}" id="mapbtn" aria-label="Map">${MAPICON}</button>`
     +(ru?`<a class="hbtn" href="${esc(ru)}" target="_blank" rel="noopener" aria-label="Route">${ROUTE}</a>`
-        :`<span class="hbtn off" aria-hidden="true">${ROUTE}</span>`);
+        :`<button class="hbtn off" id="routebtn" aria-label="Route">${ROUTE}</button>`);
   if(pick){ const pb=picker(x);
     return panel("plans",esc(pickHead.label),pickHead.meta,pb,{tail}); }
   if(editing===null) body+=`<button class="bigadd" id="p-add" style="--pink:${inkOn([x.p1||fgHex()],1)}" aria-label="New plan">+</button>`;
@@ -2228,7 +2230,14 @@ function wirePlans(x){
     e.stopPropagation();
     travOpen=travOpen===+b.dataset.trav?null:+b.dataset.trav; drawDay();
   }));
-  if($("#mapbtn")) $("#mapbtn").addEventListener("click",(e)=>{e.stopPropagation();mapOpen=!mapOpen;drawDay();});
+  if($("#mapbtn")) $("#mapbtn").addEventListener("click",(e)=>{
+    e.stopPropagation();
+    if($("#mapbtn").classList.contains("off")){ toast("No plans with a location yet"); return; }
+    mapOpen=!mapOpen;drawDay();
+  });
+  if($("#routebtn")) $("#routebtn").addEventListener("click",(e)=>{
+    e.stopPropagation(); toast("No plans with a location yet");
+  });
   wireSwipe(x);
   wireDrag(x);
   applySnap();
@@ -2401,7 +2410,12 @@ function wireSwipe(x){
     const [c,i]=spotEditing.split("|"); const sp=SPOTS[c][+i];
     const name=($("#se-name").value||"").trim();
     if(name) sp.name=name;
-    sp.url=($("#se-url").value||"").trim();
+    const newUrl=($("#se-url").value||"").trim();
+    sp.url=newUrl;
+    if(newUrl){
+      const parsed=parseSpot(newUrl);
+      if(parsed.lat!=null){ sp.lat=parsed.lat; sp.lng=parsed.lng; }
+    }
     sp.note=($("#se-note").value||"").trim();
     saveSpots(); spotEditing=null; draw(); push("spots:"+c); toast("Saved");
   });

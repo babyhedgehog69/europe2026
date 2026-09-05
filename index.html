@@ -780,7 +780,7 @@ async function open_(str){
   return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(iv)},CKEY,b64(ct))));
 }
 
-let ME=null,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",placeSearch={},calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false,spotEditing=null;
+let ME=null,MEtime=0,snapTo=null,mapOpen=false,WXD={},wxdLoaded=false,travOpen=null,sortMode="123",pick=null,pasteText="",placeSearch={},calTab="cal",pickCity=null,openPanel=undefined,seenOpen=new Set(),WX={},units="C",FX=null,fxOpen=false,spotEditing=null;
 let blob=null,TRIP=null,DAYS=[],cur=0,view="day",editing=null,PLANS={},SPOTS={},FLEDITS={},flEditing=null,pasting=null,openSec=new Set(),SYNC=null,STATUS="local",PORT={},CITY={};
 
 const SECFIX={"Bars and Clubs":"Bars & Clubs","Food and Drink":"Food & Drink","History and Art":"History & Art","Nature and Beauty":"Nature & Beauty"};
@@ -818,7 +818,7 @@ function guessSec(url,name){
 function plausibleForCity(lat,lng,city){
   const stay=(TRIP.stays||[]).find((s)=>s.city===city);
   if(!stay||stay.lat==null) return true;
-  return km(lat,lng,stay.lat,stay.lng)<=150;
+  return km(lat,lng,stay.lat,stay.lng)<=400;
 }
 
 function parseSpot(text){
@@ -1384,11 +1384,13 @@ function drawFx(){
   l.addEventListener("input",()=>{ const v=parseFloat(l.value); u.value=isNaN(v)?"":(v/rate).toFixed(2); });
 }
 
+const MESTALE=10*60*1000;
+const meStale=()=>!ME||(Date.now()-MEtime)>MESTALE;
 function askLoc(){
   if(!navigator.geolocation){ toast("No location on this device"); return; }
   toast("Locating");
   navigator.geolocation.getCurrentPosition(
-    (p)=>{ ME={lat:p.coords.latitude,lng:p.coords.longitude}; draw(); },
+    (p)=>{ ME={lat:p.coords.latitude,lng:p.coords.longitude}; MEtime=Date.now(); draw(); },
     ()=>{ if(sortMode==="KM"){sortMode="123";} draw(); toast("Location denied"); },
     {enableHighAccuracy:false,timeout:8000,maximumAge:120000}
   );
@@ -1506,7 +1508,7 @@ function drawPlaces(){
     e.stopPropagation();
     sortMode=b.dataset.sort;
     try{localStorage.setItem("eu26.sort",sortMode)}catch{}
-    if(sortMode==="KM"&&!ME){ askLoc(); return; }
+    if(sortMode==="KM"&&meStale()){ askLoc(); return; }
     draw();
   }));
   $("#screen").querySelectorAll("[data-pnl]").forEach((b)=>b.addEventListener("click",()=>{
@@ -1746,7 +1748,7 @@ function drawDay(){
     e.stopPropagation();
     sortMode=b.dataset.sort;
     try{localStorage.setItem("eu26.sort",sortMode)}catch{}
-    if(sortMode==="KM"&&!ME){ askLoc(); return; }
+    if(sortMode==="KM"&&meStale()){ askLoc(); return; }
     draw();
   }));
   wirePlans(x);
@@ -2162,7 +2164,7 @@ function geoPlans(x){
 function routeUrl(x){
   const g=geoPlans(x);
   if(!g.length) return "";
-  const pt=(p)=>`${p.lat},${p.lng}`;
+  const pt=(p)=>encodeURIComponent((p.where||p.name||"").trim())||`${p.lat},${p.lng}`;
   const dest=g[g.length-1], mids=g.slice(0,-1);
   let u=`https://www.google.com/maps/dir/?api=1&destination=${pt(dest)}&travelmode=${hasCar(x.date)?"driving":"walking"}`;
   if(ME) u+=`&origin=${ME.lat},${ME.lng}`;
@@ -2293,7 +2295,7 @@ function wirePlans(x){
     }));
     $("#screen").querySelectorAll("[data-cat]").forEach((b)=>b.addEventListener("click",()=>{
       pick.cat=b.dataset.cat;
-      if(b.dataset.cat==="__near"&&!ME){ askLoc(); return; }
+      if(b.dataset.cat==="__near"&&meStale()){ askLoc(); return; }
       armCatFlip(b,"open",b.dataset.cat);
       snapTo=".pnl.open>.ph"; drawDay(); playCatFlip();
     }));

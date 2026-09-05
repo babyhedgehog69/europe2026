@@ -815,6 +815,12 @@ function guessSec(url,name){
   return "Food & Drink";
 }
 
+function plausibleForCity(lat,lng,city){
+  const stay=(TRIP.stays||[]).find((s)=>s.city===city);
+  if(!stay||stay.lat==null) return true;
+  return km(lat,lng,stay.lat,stay.lng)<=150;
+}
+
 function parseSpot(text){
   text=(text||"").trim();
   const url=(text.match(/https?:\/\/\S+/)||[])[0]||"";
@@ -1905,7 +1911,7 @@ function links(sp){
   const city=sp.cityHint||(DAYS[cur]||{}).city||"";
   let url="";
   const isRealShareLink=sp.url&&/maps\.app\.goo\.gl|goo\.gl\/maps/.test(sp.url);
-  const isFullPlaceUrl=sp.url&&/\/maps\/place\/[^?]/.test(sp.url);
+  const isFullPlaceUrl=sp.url&&/\/maps\/place\/[^@?][^/?]*/.test(sp.url);
   if(isRealShareLink||isFullPlaceUrl) url=sp.url;
   else if(name) url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name+(city?", "+city:""));
   else if(sp.lat!=null) url=`https://www.google.com/maps/search/?api=1&query=${sp.lat},${sp.lng}`;
@@ -2336,12 +2342,16 @@ function wirePlans(x){
       if(name) p.where=name;
       const newUrl=($("#e-url").value||"").trim();
       p.url=newUrl;
+      let warn=null;
       if(newUrl){
         const parsed=parseSpot(newUrl);
-        if(parsed.lat!=null){ p.lat=parsed.lat; p.lng=parsed.lng; }
+        if(parsed.lat!=null){
+          if(plausibleForCity(parsed.lat,parsed.lng,x.city)){ p.lat=parsed.lat; p.lng=parsed.lng; }
+          else warn="That link's location looks off \u2014 kept the old one";
+        }
       }
       p.time=$("#e-time").value; p.end=$("#e-end").value; p.note=$("#e-note").value.trim();
-      savePlans(); editing=null; drawDay(); push(x.date); toast("Saved");
+      savePlans(); editing=null; drawDay(); push(x.date); toast(warn||"Saved");
     });
   }
 }
@@ -2419,12 +2429,16 @@ function wireSwipe(x){
     if(name) sp.name=name;
     const newUrl=($("#se-url").value||"").trim();
     sp.url=newUrl;
+    let warn=null;
     if(newUrl){
       const parsed=parseSpot(newUrl);
-      if(parsed.lat!=null){ sp.lat=parsed.lat; sp.lng=parsed.lng; }
+      if(parsed.lat!=null){
+        if(plausibleForCity(parsed.lat,parsed.lng,c)){ sp.lat=parsed.lat; sp.lng=parsed.lng; }
+        else warn="That link's location looks off \u2014 kept the old one";
+      }
     }
     sp.note=($("#se-note").value||"").trim();
-    saveSpots(); spotEditing=null; draw(); push("spots:"+c); toast("Saved");
+    saveSpots(); spotEditing=null; draw(); push("spots:"+c); toast(warn||"Saved");
   });
   $("#screen").querySelectorAll("[data-sw-sarch]").forEach((b)=>b.addEventListener("click",()=>{
     const [c,i]=b.dataset.swSarch.split("|");
